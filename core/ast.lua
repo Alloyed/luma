@@ -37,6 +37,10 @@ end
 
 local function symbol_repr(self)
 	return self[1]
+	:gsub('^and$', "_AND_")
+	:gsub('^or$', "_OR_")
+	:gsub('^xor$', "_XOR_")
+	:gsub('^not$', "_NOT_")
 	:gsub('^-$', "_SUB_")
 	:gsub("-","_")
 	:gsub("%?", "_QMARK_")

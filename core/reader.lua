@@ -51,6 +51,12 @@ local function string_pat()
 	return quote * capture * (quote + Err "Unterminated quote")
 end
 
+local function symbol_pat()
+	local illegal_start = pre.digit + pre.space + S"()[]{}\\\"\';:,"
+	local illegal_body  = pre.digit + pre.space + S"()[]{}/\\\"\';:,"
+	return (pre.print - illegal_start) * (pre.print - illegal_body)^0
+end
+
 local function reader(raw_str)
 	local nl                 = P"\n"
 	local space              = pre.space - nl
@@ -58,23 +64,23 @@ local function reader(raw_str)
 	local ws                 = space ^ 1
 	local lparen, rparen     = P"(", P")"
 	local lbracket, rbracket = P"[", P"]"
-	local illegal_chars      = pre.digit + pre.space + S"()[]{}/\\\"\';:,"
 
 	local grammar = P{ 'toplevel',
 		toplevel = Ct(V'atoms') / ast.make_list,
 		sexp     = lparen *
 		           Ct(V'atoms') / ast.make_sexp *
 		           (rparen + Err "Unmatched paren"),
-		atoms    = (V'atom' * ows)^1 + Err "Invalid atom",
+		atoms    = (ows * V'atom' * ows)^1 + Err "Invalid atom",
 		atom     = V'string'  + V'comment' +
 		           V'newline' + V'sexp' +
 		           V'num'     + V'symbol',
 		comment  = P ';' * P((1 - S"\r\n") ^ 0) * V'newline',
 		string   = string_pat() / ast.make_str,
 		num      = number_pat() / ast.make_num,
-		symbol   = (pre.print - illegal_chars)^1 / ast.make_symbol,
+		symbol   = symbol_pat() / ast.make_symbol,
 		newline  = nl / ast.make_newline,
 	}
+
 	local err = {}
 	local tree = L.match(grammar, raw_str, 1, err)
 	assert(ast, "string parsed incorrectly: ".. raw_str)

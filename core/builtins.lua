@@ -61,7 +61,7 @@ function builtins.let(form)
 	local body  = fun.totable(fun.tail(form))
 	body._type = "list"
 	
-	return ('do %s; %s end'):format(bound, gen(body)), true
+	return ('(function() %s; %s end)()'):format(bound, gen(body)), true
 end
 
 -- if is reserved so we need to add it as a string
@@ -109,11 +109,19 @@ function builtins._SUB_(body)
 	end
 end
 
-builtins._ADD_  = op '+'
-builtins._STAR_ = op '*'
-builtins._DIV_  = op '/'
-builtins.mod    = op '%'
-builtins['=']   = op '=='
+builtins._ADD_   = op '+'
+builtins._STAR_  = op '*'
+builtins._DIV_   = op '/'
+builtins._AND_   = op ' and '
+builtins._OR_    = op ' or '
+builtins.mod     = op '%'
+builtins['=']    = op '=='
+builtins['not='] = op '~='
+
+function builtins._NOT_(body)
+	assert(#body == 1, "Not takes a single expression")
+	return ("(not %s)"):format(gen(body[1]))
+end
 
 return function(_concat, _gen)
 	concat, gen = _concat, _gen

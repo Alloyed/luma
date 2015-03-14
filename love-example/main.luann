@@ -1,0 +1,31 @@
+(define vec (require "vec"))
+
+(define lg love.graphics)
+(define lk love.keyboard)
+
+(define *pos* (vec 100 100))
+(define size (vec 50 50))
+(define speed 250)
+
+(define directions
+  (list
+    (cons "up"    (vec  0         (- speed)))
+    (cons "down"  (vec  0         speed))
+    (cons "left"  (vec  (- speed) 0))
+    (cons "right" (vec  speed     0))))
+
+(define (velocity dt)
+  (define (test_direction direction)
+    (if (lk.isDown (car direction))
+      (cdr direction)
+      (vec 0 0)))
+  (apply + (map test_direction directions)))
+
+(define (love.load)
+  nil)
+
+(define (love.update dt)
+  (set! *pos* (+ *pos* (* (velocity) dt))))
+
+(define (love.draw)
+  (lg.rectangle "fill" (car *pos*) (cdr *pos*) (car size) (cdr size)))

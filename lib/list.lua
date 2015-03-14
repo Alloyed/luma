@@ -1,3 +1,4 @@
+local fun = require 'lib.fun'
 local ListProto = {}
 local list = setmetatable({}, {__index = ListProto})
 
@@ -9,7 +10,7 @@ function ListProto.cdr(self)
 	return self[2]
 end
 
-function ListProto.maketable(self)
+function ListProto.table(self)
 	local tbl = {}
 	for _, v in self:ipairs() do
 		table.insert(tbl, v)
@@ -32,6 +33,13 @@ function ListProto.append(...)
 end
 
 local car, cdr = ListProto.car, ListProto.cdr
+function ListProto.unpack(self)
+	if self == nil then
+		return
+	end
+	return car(self), ListProto.unpack(cdr(self))
+end
+
 local function _ipairs(param, state, hi)
 	if hi then
 		print("HI " .. hi)
@@ -54,13 +62,43 @@ end
 --   	for _, v in ipairs(list) do
 --   or, in 5.1
 --   	for _, v in list:ipairs() do
---   note that instead of the first value being a meaningful index like it is 
+--   note that instead of the first value being a meaningful index like it is
 --   in normal ipairs, it is used soley to represent the iterator's state.
 --   This is for luafun's sake.
 --]]
 function ListProto.ipairs(self)
 	return _ipairs, self, self
 end
+
+-- Returns a list that looks like a table, at least in that it support
+-- __index and __len. To get the actual table, use t._self
+function ListProto.wrap(self, meta)
+	local inner = {}
+	function inner.unpack(tbl)
+		return ListProto.unpack(self)
+	end
+	inner._type = meta._type
+	return setmetatable(inner, {
+		__index = function(_, k)
+			if k == '_self' then
+				return self
+			elseif type(k) == 'number' then
+				return fun.nth(k, self)
+			end
+			return fun[k]
+		end,
+		__newindex = function()
+			assert(nil, "Wrapped lists are read-only")
+		end,
+		__ipairs = function()
+			return ListProto.ipairs(self)
+		end,
+		__len = function()
+			return fun.operator.len(self)
+		end
+	})
+end
+
 
 local mt = {}
 
@@ -80,7 +118,7 @@ function list.icons(a, b)
 	return {a, b}
 end
 
-function list.makelist(tbl)
+function list.from(tbl)
 	local function loop(i)
 		if tbl[i] == nil then return nil end
 		return list.cons(tbl[i], loop(i+1))
@@ -89,7 +127,7 @@ function list.makelist(tbl)
 end
 
 function list.list(...)
-	return list.makelist({...})
+	return list.from({...})
 end
 
 return list

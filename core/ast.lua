@@ -1,37 +1,16 @@
 local inspect = require 'lib.inspect'
+local List    = require 'lib.list'
 local ast = {}
 
-local function pr_list(as)
-	print("{" .. table.concat(as, ",") .. "}")
-end
-
-local function repr_sexp(sexp)
-	assert(sexp._type == 'sexp')
-	local t = {}
-	for i, v in ipairs(sexp) do
-		t[i] = tostring(v)
-	end
-	return "(" .. table.concat(t, " ") .. ")"
-end
-
 function ast.make_sexp(tbl)
+	local l = List.from(tbl):wrap{_type = 'sexp'}
 	tbl._type = 'sexp'
-	--setmetatable(tbl, {__tostring = repr_sexp})
-	return tbl
-end
-
-local function repr_list(sexp)
-	assert(sexp._type == 'list')
-	local t = {}
-	for i, v in ipairs(sexp) do
-		t[i] = tostring(v)
-	end
-	return "'(" .. table.concat(t, " ") .. ")"
+	return l
 end
 
 function ast.make_list(tbl)
+	local l = {_type = 'sexp', List.from(tbl)}
 	tbl._type = 'list'
-	--setmetatable(tbl, {__tostring = repr_list})
 	return tbl
 end
 
@@ -92,6 +71,8 @@ function ast.make_newline()
 end
 
 local function list_walk(expr)
+	return expr
+	--[[
 	local done = {_type = expr._type}
 	for _, v in ipairs(expr) do
 		if v._type == 'newline' then
@@ -106,6 +87,7 @@ local function list_walk(expr)
 		end
 	end
 	return done
+	--]]
 end
 
 function ast.tag_ast(expr)

@@ -78,7 +78,7 @@ local function reader(raw_str)
 		string   = string_pat() / ast.make_str,
 		num      = number_pat() / ast.make_num,
 		symbol   = symbol_pat() / ast.make_symbol,
-		newline  = nl / ast.make_newline,
+		newline  = nl --/ ast.make_newline,
 	}
 
 	local err = {}

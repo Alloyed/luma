@@ -27,6 +27,13 @@ local function defun(signature, ...)
 	local args = fun.totable(fun.tail(signature))
 	return defval(name, closure(args, ...))
 end
+local _unpack = unpack
+local function unpack(t)
+	if t.unpack then
+		return t:unpack()
+	end
+	return _unpack(t)
+end
 
 function builtins.set_BANG_(body)
 	local lval, rval = unpack(body)

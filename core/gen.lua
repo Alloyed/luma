@@ -14,8 +14,8 @@ local function concat(tbl, sep)
 end
 
 local function fcall(sexp)
-	local args = {_type = 'list', unpack(sexp)}
-	local name = fun.head(args)
+	-- local args = {_type = 'list', unpack(sexp)}
+	local name = fun.head(sexp)
 	local args = fun.totable(fun.tail(sexp))
 	local builtin = builtins[tostring(name)]
 	if builtin then

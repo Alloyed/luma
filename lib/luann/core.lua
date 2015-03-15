@@ -1,6 +1,10 @@
-local List = require 'list'
+local List = require 'lib.list'
 
 list, cons, car, cdr, append = List.list, List.cons, List.car, List.cdr, List.append
+
+local Keyword = require 'lib.keyword'
+
+keyword, _G['keyword?'] = Keyword.keyword, Keyword.is_keyword
 
 function map(fn, l)
 	local function loop(l)

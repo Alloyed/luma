@@ -54,6 +54,10 @@ local function num_repr(self)
 	return tostring(self[1])
 end
 
+function ast.make_kw(s)
+	return ast.make_sexp {ast.make_symbol'keyword', ast.make_str(s)}
+end
+
 function ast.make_num(str)
 	local t = {_type = 'number', tonumber(str)}
 	setmetatable(t, {__tostring = num_repr})

@@ -1,7 +1,7 @@
 --[[
--- "Builtin" functions are functions that take a list of arguments 
--- (unevaluated, like macros) and return a lua string representing the 
--- compiled form of the function. In a sense, they are macros that talk lua 
+-- "Builtin" functions are functions that take a list of arguments
+-- (unevaluated, like macros) and return a string of the lua representation
+-- of that expression. In a sense, they are macros that generate lua,
 -- instead of lisp.
 --]]
 local fun         = require 'lib.fun'
@@ -76,7 +76,7 @@ builtins["if"] = function(a)
 	local pred    = gen(a[1])
 	local iftrue  = gen(ast.make_list{a[2]})
 	local iffalse = a[3] and
-		"else " ..gen(ast.make_list{a[3]}) or ""
+		"else " .. gen(ast.make_list{a[3]}) or ""
 	return ("(function() if %s then %s %s end end)()")
 		:format(pred, iftrue, iffalse)
 end

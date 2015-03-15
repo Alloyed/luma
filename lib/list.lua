@@ -3,11 +3,11 @@ local ListProto = {}
 local list = setmetatable({}, {__index = ListProto})
 
 function ListProto.car(self)
-	return self[1]
+	return rawget(self, 1)
 end
 
 function ListProto.cdr(self)
-	return self[2]
+	return rawget(self, 2)
 end
 
 function ListProto.table(self)
@@ -40,10 +40,7 @@ function ListProto.unpack(self)
 	return car(self), ListProto.unpack(cdr(self))
 end
 
-local function _ipairs(param, state, hi)
-	if hi then
-		print("HI " .. hi)
-	end
+local function _ipairs(param, state)
 	if state == -1 then
 		return nil
 	end
@@ -70,40 +67,16 @@ function ListProto.ipairs(self)
 	return _ipairs, self, self
 end
 
--- Returns a list that looks like a table, at least in that it support
--- __index and __len. To get the actual table, use t._self
-function ListProto.wrap(self, meta)
-	local inner = {}
-	function inner.unpack(tbl)
-		return ListProto.unpack(self)
-	end
-	inner._type = meta._type
-	return setmetatable(inner, {
-		__index = function(_, k)
-			if k == '_self' then
-				return self
-			elseif type(k) == 'number' then
-				return fun.nth(k, self)
-			end
-			return fun[k]
-		end,
-		__newindex = function()
-			assert(nil, "Wrapped lists are read-only")
-		end,
-		__ipairs = function()
-			return ListProto.ipairs(self)
-		end,
-		__len = function()
-			return fun.operator.len(self)
-		end
-	})
-end
-
-
 local mt = {}
 
-mt.__index  = ListProto
+mt.__index  = function(self, k)
+	if type(k) == 'number' then
+		return fun.nth(k, self)
+	end
+	return ListProto[k]
+end
 mt.__ipairs = ListProto.ipairs
+mt.__len = fun.length
 
 -- FIXME: add a list notation
 function mt.__tostring(l)

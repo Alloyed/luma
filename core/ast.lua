@@ -3,8 +3,8 @@ local List    = require 'lib.list'
 local ast = {}
 
 function ast.make_sexp(tbl)
-	local l = List.from(tbl):wrap{_type = 'sexp'}
-	tbl._type = 'sexp'
+	local l = List.from(tbl)
+	l._type = 'sexp'
 	return l
 end
 

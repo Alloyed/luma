@@ -66,8 +66,8 @@ local function reader(raw_str)
 	local space              = pre.space - nl
 	local ows                = space ^ 0
 	local ws                 = space ^ 1
-	local lparen, rparen     = P"(", P")"
-	local lbracket, rbracket = P"[", P"]"
+	local lparen, rparen     = P"(" + P"[", P")" + P"]"
+	-- local lbracket, rbracket = P"[", P"]"
 
 	local grammar = P{ 'toplevel',
 		toplevel = Ct(V'atoms') / ast.make_list,

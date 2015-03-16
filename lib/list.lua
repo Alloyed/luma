@@ -1,3 +1,4 @@
+-- Naive linked list implementation
 local fun = require 'lib.fun'
 local ListProto = {}
 local list = setmetatable({}, {__index = ListProto})
@@ -40,15 +41,23 @@ function ListProto.unpack(self)
 	return car(self), ListProto.unpack(cdr(self))
 end
 
+local mt = {}
+local function is_list(o)
+	return getmetatable(o) == mt
+end
+
+local ITER_DONE = {}
 local function _ipairs(param, state)
-	if state == -1 then
+	if state == ITER_DONE then
 		return nil
 	end
 	local rest = cdr(state)
 	if rest == nil then
 		-- the loop ends on nil so we need to introduce a sentinel (-1) to
 		-- return the last value before quitting
-		return -1, car(state)
+		return ITER_DONE, car(state)
+	elseif not is_list(rest) then
+		return ITER_DONE, car(state), rest
 	end
 	return rest, car(state)
 end
@@ -67,8 +76,6 @@ function ListProto.ipairs(self)
 	return _ipairs, self, self
 end
 
-local mt = {}
-
 mt.__index  = function(self, k)
 	if type(k) == 'number' then
 		return fun.nth(k, self)
@@ -77,6 +84,9 @@ mt.__index  = function(self, k)
 end
 mt.__ipairs = ListProto.ipairs
 mt.__len = fun.length
+mt.__eq = function(o1, o2)
+	return o1:car() == o2:car() and o2:cdr() == o2:cdr()
+end
 
 -- FIXME: add a list notation
 function mt.__tostring(l)
@@ -91,12 +101,15 @@ function list.icons(a, b)
 	return {a, b}
 end
 
-function list.from(tbl)
-	local function loop(i)
-		if tbl[i] == nil then return nil end
-		return list.cons(tbl[i], loop(i+1))
-	end
-	return loop(1)
+local function reverse(...)
+	return fun.reduce(function(l, v)
+		return list.cons(v, l)
+	end, nil, ...)
+end
+
+function list.from(...)
+	-- FIXME: Real tables can safely be read in reverse
+	return reverse(reverse(...))
 end
 
 function list.list(...)

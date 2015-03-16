@@ -6,21 +6,13 @@ local Keyword = require 'lib.keyword'
 
 keyword, _G['keyword?'] = Keyword.keyword, Keyword.is_keyword
 
-function map(fn, l)
-	local function loop(l)
-		if l == nil then return nil end
-		return List.cons(fn(l:car()), loop(l:cdr()))
-	end
-	return loop(l)
-end
+local AList = require 'lib.alist'
 
-function reduce(fn, l)
-	local res, rr = l:car(), l:cdr()
-	for _, v in rr:ipairs() do
-		res = fn(res, v)
-	end
-	return res
-end
+alist = AList.alist
+
+local fun = require 'lib.fun'
+
+map, reduce, count, nth = fun.map, fun.reduce, fun.length, fun.nth
 
 do
 	local i, t, l = 0, {}
@@ -59,7 +51,7 @@ function _SUB_(...)
 	return sum
 end
 
-function _MULT_(...)
+function _STAR_(...)
 	local sum = 1
 	for _, v in vararg(...) do
 		sum = sum * v
@@ -67,7 +59,7 @@ function _MULT_(...)
 	return sum
 end
 
-function _DIV(...)
+function _DIV_(...)
 	local sum = ...
 	for _, v in vararg(select(2, ...)) do
 		sum = sum / v
@@ -75,6 +67,27 @@ function _DIV(...)
 	return sum
 end
 
-function apply(fn, l)
-	return fn(unpack(List.maketable(l)))
+function apply(fn, ...)
+	local args = List.from(fun.chain(...))
+	return fn(List.unpack(args))
 end
+
+function partial(f, ...)
+	local va = varargs(...)
+	return function(...)
+		local vb = varargs(...)
+		apply(f, va, vb)
+	end
+end
+
+function comp(...)
+	fns = {...}
+	return function(...)
+		local v = ...
+		for _, f in ipairs(fns) do
+			v = f(v)
+		end
+		return v
+	end
+end
+

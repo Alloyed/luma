@@ -1,3 +1,3 @@
 all:
-	cd ..; lua ./core.lua < love-example/main.luann | tee love-example/main.lua
+	cd ..; lua ./core.lua < love-example/main.luma | tee love-example/main.lua
 	#love .

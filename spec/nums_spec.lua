@@ -1,6 +1,6 @@
 local reader = require 'core.reader'
 local gen = require 'core.gen'
-require 'lib.luann.core'
+require 'lib.luma.core'
 
 local function run(str)
 	return loadstring(gen(reader(str))) ()

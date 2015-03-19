@@ -22,10 +22,11 @@ local function closure(args, ...)
 end
 
 local function defun(signature, ...)
-	local body = {...}
+	local body = ast.make_list {...}
 	local name = fun.head(signature)
 	local args = fun.totable(fun.tail(signature))
-	return defval(name, closure(args, ...))
+	local argstr = concat(args, ",")
+	return ("local function %s(%s) %s end"):format(gen(name), argstr, gen(body))
 end
 local _unpack = unpack
 local function unpack(t)
@@ -124,6 +125,10 @@ builtins._OR_    = op ' or '
 builtins.mod     = op '%'
 builtins['=']    = op '=='
 builtins['not='] = op '~='
+builtins['<']    = op '<'
+builtins['>']    = op '>'
+builtins['<=']   = op '<='
+builtins['>=']   = op '>='
 
 function builtins._NOT_(body)
 	assert(#body == 1, "Not takes a single expression")

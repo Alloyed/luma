@@ -46,6 +46,8 @@ local function is_list(o)
 	return getmetatable(o) == mt
 end
 
+list.is_list = is_list
+
 local ITER_DONE = {}
 local function _ipairs(param, state)
 	if state == ITER_DONE then

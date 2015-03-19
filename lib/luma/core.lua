@@ -13,6 +13,15 @@ alist = AList.alist
 local fun = require 'lib.fun'
 
 map, reduce, count, nth = fun.map, fun.reduce, fun.length, fun.nth
+concat = fun.chain
+
+function identity(...)
+	return ...
+end
+
+function doall(...)
+	return fun.each(identity, ...)
+end
 
 do
 	local i, t, l = 0, {}
@@ -91,3 +100,6 @@ function comp(...)
 	end
 end
 
+function mapcat(...)
+	apply(concat, map(...))
+end

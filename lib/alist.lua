@@ -42,12 +42,9 @@ function AList.values(a)
 	return fun.map(list.cdr, a)
 end
 
-function AList.get(a, find)
-	fun.each(function(pair)
-		k, v = pair:car(), pair:cdr()
-		if k == find then
-			return v
-		end
+function AList.get(a, k)
+	return fun.find(function(pair)
+		return k == pair:car() and pair:cdr()
 	end, a)
 end
 

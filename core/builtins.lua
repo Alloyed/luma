@@ -130,6 +130,15 @@ function builtins._NOT_(body)
 	return ("(not %s)"):format(gen(body[1]))
 end
 
+function builtins.table(body)
+	local a_part, i_part = body[1], body[2]
+	local alist = AList.from_flat(a_part)
+	local pairs = {}
+	fun.each(function(k, v) end)
+
+	return ("{%s}"):format(table.concat(pairs, ","))
+end
+
 return function(_concat, _gen)
 	concat, gen = _concat, _gen
 	return builtins

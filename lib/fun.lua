@@ -453,6 +453,20 @@ exports.span = exports.split
 -- Indexing
 --------------------------------------------------------------------------------
 
+local find = function(pred, gen, param, state)
+	for _k, v in gen, param, state do
+		local r = pred(v)
+		if r then
+			return r
+		end
+	end
+	return nil
+end
+methods.find = method1(find)
+exports.find = export1(find)
+methods.elem = methods.find
+exports.elem = exports.find
+
 local index = function(x, gen, param, state)
     local i = 1
     for _k, r in gen, param, state do

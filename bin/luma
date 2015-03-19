@@ -1,4 +1,4 @@
 #!/usr/bin/env lua
 local core = require 'core.core'
 
-core.main {...}
+core.i_main {...}

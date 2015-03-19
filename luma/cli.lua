@@ -49,13 +49,13 @@ function Luma.i_main(argv)
 	)
 	local args = luma:parse(argv)
 	if args.input then
-		local chunk = s_loadfile(args.input)
-		assert(chunk, err)
+		local chunk, err = s_loadfile(args.input)
+		assert(chunk ~= nil, err)
 		return chunk()
 	end
 	if args.eval then
 		local chunk, err = s_loadstring(args.eval, "eval")
-		assert(chunk, err)
+		assert(chunk ~= nil, err)
 		return chunk()
 	end
 	if args.repl then
@@ -65,9 +65,16 @@ end
 
 function Luma.c_main(argv)
 	local luma = argparse():description "Luma is a lisp that compiles to lua"
-	luma:option "-p" "--pipe"
+	luma:argument "input"
+		:args "+"
+		:description "input files"
+	luma:flag "-p" "--pipe"
 		:description "Pipe compiled code to stdout"
 	local args = luma:parse(argv)
+	for _, fname in ipairs(args.input) do
+		print("compiling " .. fname)
+		s_compilefile(fname)
+	end
 	print(inspect(args))
 end
 

@@ -15,12 +15,35 @@ function s_loadstring(s, chunk)
 	return s_loadexpr(ast, chunk)
 end
 
+function s_compilestring(s)
+	local ast = reader(s)
+	return gen(ast)
+end
+
 function s_loadexpr(expr, chunk)
 	local lua = gen(expr)
 	return loadstring(lua, chunk)
 end
 
-function s_loadfile()
-	error("TODO")
+function s_loadfile(fname)
+	local f = io.open(fname, "r")
+	local s = f:read('*a')
+	f:close()
+	return s_loadstring(s, fname)
+end
+
+function s_compilefile(fname)
+	local f = io.open(fname, 'r')
+	local s = f:read('*a')
+	f:close()
+
+	local res, err = s_compilestring(s)
+	assert(res, err)
+
+	local w = io.open(string.gsub(fname, "%.luma$", ".lua"), 'w')
+	w:write("require('luma.lib.prelude');" .. res)
+	w:close()
+
+	return true
 end
 

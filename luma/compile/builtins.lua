@@ -7,6 +7,7 @@
 local fun         = require 'luma.lib.fun'
 local inspect     = require 'inspect'
 local ast         = require 'luma.read.ast'
+local AList       = require 'luma.lib.alist'
 local builtins    = {}
 local concat, gen = nil, nil
 
@@ -26,8 +27,10 @@ local function defun(signature, ...)
 	local name = fun.head(signature)
 	local args = fun.totable(fun.tail(signature))
 	local argstr = concat(args, ",")
-	return ("local function %s(%s) %s end"):format(gen(name), argstr, gen(body))
+	return ("local function %s(%s) %s end")
+		:format(tostring(name), argstr, gen(body))
 end
+
 local _unpack = unpack
 local function unpack(t)
 	if t.unpack then
@@ -117,18 +120,18 @@ function builtins._SUB_(body)
 	end
 end
 
-builtins._ADD_   = op '+'
-builtins._STAR_  = op '*'
-builtins._DIV_   = op '/'
-builtins._AND_   = op ' and '
-builtins._OR_    = op ' or '
-builtins.mod     = op '%'
-builtins['=']    = op '=='
-builtins['not='] = op '~='
-builtins['<']    = op '<'
-builtins['>']    = op '>'
-builtins['<=']   = op '<='
-builtins['>=']   = op '>='
+builtins._ADD_    = op '+'
+builtins._STAR_   = op '*'
+builtins._DIV_    = op '/'
+builtins._AND_    = op ' and '
+builtins._OR_     = op ' or '
+builtins.mod      = op '%'
+builtins._EQ_     = op '=='
+builtins.not_EQ_  = op '~='
+builtins._LT_     = op '<'
+builtins._GT_     = op '>'
+builtins._LT__EQ_ = op '<='
+builtins._GT__EQ_ = op '>='
 
 function builtins._NOT_(body)
 	assert(#body == 1, "Not takes a single expression")
@@ -136,12 +139,24 @@ function builtins._NOT_(body)
 end
 
 function builtins.table(body)
-	local a_part, i_part = body[1], body[2]
-	local alist = AList.from_flat(a_part)
+	local alist = AList.from_flat(body)
 	local pairs = {}
-	fun.each(function(k, v) end)
+	fun.each(function(pair)
+		local k, v = pair:car(), pair:cdr()
+		table.insert(pairs, ("[%s] = %s"):format(gen(k), gen(v)))
+	end, alist)
 
 	return ("{%s}"):format(table.concat(pairs, ","))
+end
+
+function builtins.array(body)
+	local a = {}
+	fun.each(function(v)
+		local s = gen(v)
+		table.insert(a, s)
+	end, body)
+
+	return ("{%s}"):format(table.concat(a, ","))
 end
 
 return function(_concat, _gen)

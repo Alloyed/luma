@@ -1,9 +1,9 @@
-local kw = require('lib.keyword').keyword
+local kw = require('luma.lib.keyword').keyword
 
-local reader = require 'core.reader'
-local gen = require 'core.gen'
+local reader = require 'luma.read'
+local gen = require 'luma.compile'
 
-require 'lib.luma.core'
+require 'luma.lib.core'
 
 local function run(str, print_compiled)
 	local t = reader(str)

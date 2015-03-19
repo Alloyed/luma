@@ -1,14 +1,14 @@
 local _LUMA_VERSION = "Luma v0.1-snapshot"
-local path    = "./lib/?.lua;"
+local path    = ""
 
 if not _LOADED then
 	_LOADED = true
 	package.path = path .. package.path
-	require('luma.core')
+	require('luma.lib.core')
 end
 
-local reader = require 'core.reader'
-local gen = require 'core.gen'
+local reader = require 'luma.read'
+local gen = require 'luma.compile'
 
 function s_loadstring(s, chunk)
 	local ast = reader(s)

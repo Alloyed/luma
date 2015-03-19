@@ -1,4 +1,4 @@
-local ast = require 'core.ast'
+local ast = require 'luma.read.ast'
 local L   = require 'lpeg'
 
 local pre = L.locale()

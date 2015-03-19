@@ -1,5 +1,5 @@
-local inspect = require 'lib.inspect'
-local List    = require 'lib.list'
+local inspect = require 'inspect'
+local List    = require 'luma.lib.list'
 local ast = {}
 
 function ast.make_sexp(tbl)

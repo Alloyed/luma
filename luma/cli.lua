@@ -1,8 +1,8 @@
 #!/usr/bin/env lua
-local argparse = require 'lib.argparse'
-local inspect  = require 'lib.inspect'
+local argparse = require 'argparse'
+local inspect  = require 'inspect'
 
-require 'lib.luma.prelude'
+require 'luma.lib.prelude'
 
 local Luma = {}
 

@@ -1,5 +1,5 @@
-local reader = require 'core.reader'
-local gen = require 'core.gen'
+local reader = require 'luma.read'
+local gen = require 'luma.compile'
 
 local function run(str)
 	local t = reader(str)

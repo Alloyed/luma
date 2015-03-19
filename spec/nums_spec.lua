@@ -1,6 +1,6 @@
-local reader = require 'core.reader'
-local gen = require 'core.gen'
-require 'lib.luma.core'
+local reader = require 'luma.read'
+local gen = require 'luma.compile'
+require 'luma.lib.core'
 
 local function run(str)
 	return loadstring(gen(reader(str))) ()

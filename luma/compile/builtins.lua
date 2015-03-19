@@ -4,9 +4,9 @@
 -- of that expression. In a sense, they are macros that generate lua,
 -- instead of lisp.
 --]]
-local fun         = require 'lib.fun'
-local inspect     = require 'lib.inspect'
-local ast         = require 'core.ast'
+local fun         = require 'luma.lib.fun'
+local inspect     = require 'inspect'
+local ast         = require 'luma.read.ast'
 local builtins    = {}
 local concat, gen = nil, nil
 

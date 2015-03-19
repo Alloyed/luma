@@ -1,4 +1,4 @@
 #!/usr/bin/env lua
-local core = require 'core.core'
+local core = require 'luma.cli'
 
 core.c_main {...}

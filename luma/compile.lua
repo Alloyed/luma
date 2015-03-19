@@ -1,7 +1,7 @@
-local inspect          = require 'lib.inspect'
-local fun              = require 'lib.fun'
-local ast              = require 'core.ast'
-local builtins_factory = require 'core.builtins'
+local inspect          = require 'inspect'
+local fun              = require 'luma.lib.fun'
+local ast              = require 'luma.read.ast'
+local builtins_factory = require 'luma.compile.builtins'
 local gen              = nil
 local builtins         = nil
 

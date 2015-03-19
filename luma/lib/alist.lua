@@ -1,6 +1,6 @@
 -- Association list implementation
-local fun = require 'lib.fun'
-local list = require 'lib.list'
+local fun = require 'luma.lib.fun'
+local list = require 'luma.lib.list'
 local AList = {}
 
 -- warning, you have to pass in an iter that returns pairs instead of ipairs

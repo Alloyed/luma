@@ -66,16 +66,22 @@ end
 function Luma.c_main(argv)
 	local luma = argparse():description "Luma is a lisp that compiles to lua"
 	luma:argument "input"
-		:args "+"
+		:args "*"
 		:description "input files"
 	luma:flag "-p" "--pipe"
 		:description "Pipe compiled code to stdout"
+	luma:option "-s" "--string"
+		:description "Compile string to stdout"
 	local args = luma:parse(argv)
-	for _, fname in ipairs(args.input) do
-		print("compiling " .. fname)
-		s_compilefile(fname)
+	if args.string then
+		local out = s_compilestring(args.string)
+		print(out)
+	else
+		for _, fname in ipairs(args.input) do
+			print("compiling " .. fname)
+			s_compilefile(fname)
+		end
 	end
-	print(inspect(args))
 end
 
 return Luma

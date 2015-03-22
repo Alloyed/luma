@@ -52,8 +52,8 @@ local function string_pat()
 end
 
 local function symbol_pat()
-	local illegal_start = pre.digit + pre.space + S"()[]{}\\\"\';:,"
-	local illegal_body  = pre.space + S"()[]{}/\\\"\';:,"
+	local illegal_start = pre.digit + pre.space + S"()[]{}\\\"\';:.,"
+	local illegal_body  = pre.space + S"()[]{}/\\\"\';,"
 	return (pre.print - illegal_start) * (pre.print - illegal_body)^0
 end
 
@@ -77,7 +77,7 @@ local function reader(raw_str)
 		atoms    = (ows * V'atom' * ows)^1 + Err "Invalid atom",
 		atom     = V'string'  + V'comment' +
 		           V'newline' + V'sexp' +
-		           V'num'     + V'keyword' + V'symbol',
+		           V'num'     + V'symbol' + V'keyword',
 		comment  = P ';' * P((1 - S"\r\n") ^ 0) * V'newline',
 		string   = string_pat()  / ast.make_str,
 		num      = number_pat()  / ast.make_num,

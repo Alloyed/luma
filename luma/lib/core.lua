@@ -15,6 +15,8 @@ local fun = require 'luma.lib.fun'
 map, reduce, count, nth = fun.map, fun.reduce, fun.length, fun.nth
 concat = fun.chain
 
+ast = require 'luma.read.ast'
+
 function identity(...)
 	return ...
 end

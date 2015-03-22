@@ -1,9 +1,9 @@
 local reader = require 'luma.read'
 local gen = require 'luma.compile'
-require 'luma.lib.core'
+require 'luma.lib.prelude'
 
 local function run(str)
-	return loadstring(gen(reader(str))) ()
+	return s_loadstring(str) ()
 end
 
 describe("Numbers", function()
@@ -31,22 +31,22 @@ describe("Numbers", function()
 		assert.are.equal(run("(/ 2)"), 2)
 		assert.are.equal(run'(apply / (list 10 5))', 2)
 	end)
-	it("<", function()
+	it("are less than", function()
 		assert.is_true(run'(< 1 2)')
 		assert.is_not_true(run'(< 10 10)')
 		assert.is_not_true(run'(< 10 5)')
 	end)
-	it(">", function()
+	it("are greater then", function()
 		assert.is_true(run'(> 2 1)')
 		assert.is_not_true(run'(> 10 10)')
 		assert.is_not_true(run'(> 5 10)')
 	end)
-	it("<=", function()
+	it("are less than/equal to", function()
 		assert.is_true(run'(<= 1 2)')
 		assert.is_true(run'(<= 10 10)')
 		assert.is_not_true(run'(<= 10 5)')
 	end)
-	it(">=", function()
+	it("are greater than/equal to", function()
 		assert.is_true(run'(>= 2 1)')
 		assert.is_true(run'(>= 10 10)')
 		assert.is_not_true(run'(>= 5 10)')

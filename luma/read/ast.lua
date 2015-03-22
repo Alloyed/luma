@@ -2,10 +2,18 @@ local inspect = require 'inspect'
 local List    = require 'luma.lib.list'
 local ast = {}
 
+local function sexp_q()
+	error("TODO")
+end
+
 function ast.make_sexp(tbl)
 	local l = List.from(tbl)
 	l._type = 'sexp'
 	return l
+end
+
+local function list_q(l)
+	error("lists are broken")
 end
 
 function ast.make_list(tbl)
@@ -36,8 +44,13 @@ local function symbol_eq(a, b)
 	return b._type == 'symbol' and a[1] == b[1]
 end
 
+local function symbol_q(sym)
+	return ("ast.make_symbol(%q)"):format(sym[1])
+end
+
+-- TODO: intern symbols
 function ast.make_symbol(str)
-	local t = {_type = 'symbol', str}
+	local t = {_type = 'symbol', _quote = symbol_q, str}
 	setmetatable(t, {__tostring = symbol_repr,
                      __eq       = symbol_eq})
 	return t
@@ -47,22 +60,30 @@ local function string_repr(self)
 	return ("%q"):format(self[1])
 end
 
-function ast.make_str(str)
-	local t = {_type = 'string', str}
-	setmetatable(t, {__tostring = string_repr})
-	return t
+local function str_q(s)
+	return ("ast.make_str(%q)"):format(s[1])
 end
 
-local function num_repr(self)
-	return tostring(self[1])
+function ast.make_str(str)
+	local t = {_type = 'string', _quote = str_q, str}
+	setmetatable(t, {__tostring = string_repr})
+	return t
 end
 
 function ast.make_kw(s)
 	return ast.make_sexp {ast.make_symbol'keyword', ast.make_str(s)}
 end
 
+local function num_repr(self)
+	return tostring(self[1])
+end
+
+local function num_q(n)
+	return ("ast.make_num(%f)"):format(n[1])
+end
+
 function ast.make_num(str)
-	local t = {_type = 'number', tonumber(str)}
+	local t = {_type = 'number', _quote = num_q, tonumber(str)}
 	setmetatable(t, {__tostring = num_repr})
 	return t
 end

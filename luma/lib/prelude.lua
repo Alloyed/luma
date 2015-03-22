@@ -17,7 +17,7 @@ end
 
 function s_compilestring(s)
 	local ast = reader(s)
-	return gen(ast)
+	return "require 'luma.lib.prelude'; " .. gen(ast)
 end
 
 function s_loadexpr(expr, chunk)

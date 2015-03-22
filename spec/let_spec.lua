@@ -40,3 +40,35 @@ describe("(let)", function()
 		end)
 	end)
 end)
+
+describe("(define)", function()
+	it("binds to the next highest scope", function()
+		assert.has.no.errors(function()
+			run [[
+			(let ((a 1))
+			  (define b 2)
+			  (assert (= a 1))
+			  (assert (= b 2)))
+			(assert (= a nil))
+			(assert (= b nil))]]
+		end)
+	end)
+	it("can be used on tables", function()
+		assert.has.no.errors(function()
+			run [[
+			(define a (table))
+			(define a.b 2)
+			(assert (= a.b 2))
+			]]
+		end)
+	end)
+	it("can be used to define methods", function()
+		assert.has.no.errors(function()
+			run [[
+			(define a (table))
+			(define (a:m _) self)
+			(assert (= (a:m 10) a))
+			]]
+		end)
+	end)
+end)

@@ -18,17 +18,18 @@ end
 
 local function closure(args, ...)
 	local body = ast.make_list {...}
-	local argstr = concat(args, ",")
+	local argstr = concat(args:table(), ",")
 	return ("(function(%s) %s end)"):format(argstr, gen(body))
 end
 
 local function defun(signature, ...)
 	local body = ast.make_list {...}
-	local name = fun.head(signature)
+	local name = tostring(fun.head(signature))
 	local args = fun.totable(fun.tail(signature))
 	local argstr = concat(args, ",")
-	return ("local function %s(%s) %s end")
-		:format(tostring(name), argstr, gen(body))
+	local islocal = name:match("[%.%:]") and "" or "local "
+	return ("%sfunction %s(%s) %s end")
+		:format(islocal, name, argstr, gen(body))
 end
 
 local _unpack = unpack
@@ -142,8 +143,10 @@ function builtins.table(body)
 	local alist = AList.from_flat(body)
 	local pairs = {}
 	fun.each(function(pair)
-		local k, v = pair:car(), pair:cdr()
-		table.insert(pairs, ("[%s] = %s"):format(gen(k), gen(v)))
+		if pair ~= nil then
+			local k, v = pair:car(), pair:cdr()
+			table.insert(pairs, ("[%s] = %s"):format(gen(k), gen(v)))
+		end
 	end, alist)
 
 	return ("{%s}"):format(table.concat(pairs, ","))
@@ -157,6 +160,10 @@ function builtins.array(body)
 	end, body)
 
 	return ("{%s}"):format(table.concat(a, ","))
+end
+
+function builtins.quote(body)
+	return body[1]:_quote()
 end
 
 return function(_concat, _gen)

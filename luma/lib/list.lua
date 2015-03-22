@@ -95,6 +95,11 @@ function mt.__tostring(l)
 	return string.format("(%s . %s)", tostring(l:car()), tostring(l:cdr()))
 end
 
+-- Note that this is not the same as nil, ie. '() and nil are different
+function list.empty(...)
+	return setmetatable({}, mt)
+end
+
 function list.cons(a, b)
 	return setmetatable({a, b}, mt)
 end

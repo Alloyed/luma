@@ -115,6 +115,9 @@ local function reverse(...)
 end
 
 function list.from(...)
+	if fun.length(...) == 0 then
+		return list.empty()
+	end
 	-- FIXME: Real tables can safely be read in reverse
 	return reverse(reverse(...))
 end

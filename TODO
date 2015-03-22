@@ -1,0 +1,2 @@
+* Fix (quote)
+* Teach the compiler about lua exprs vs statements

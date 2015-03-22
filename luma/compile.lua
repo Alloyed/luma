@@ -43,6 +43,9 @@ local function exprlist(expr)
 end
 
 function gen(expr)
+	if expr == nil then
+		return ""
+	end
 	local t = expr._type
 	local mt = getmetatable(expr)
 	local s, isStatement

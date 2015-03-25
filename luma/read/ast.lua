@@ -51,7 +51,7 @@ end
 function ast.make_symbol(str)
 	local t = {_type = 'symbol', _quote = symbol_q, str}
 	setmetatable(t, {__tostring = symbol_repr,
-                     __eq       = symbol_eq})
+	                 __eq       = symbol_eq})
 	return t
 end
 

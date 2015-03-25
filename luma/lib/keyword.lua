@@ -6,8 +6,15 @@ function kw.tostring(o)
 	return o.key
 end
 
+local mt = {
+	__tostring = kw.tostring,
+	__call = function(o, table)
+		return table[o]
+	end
+}
+
 local function new_keyword(s)
-	local new = setmetatable({key=s}, {__tostring = kw.tostring})
+	local new = setmetatable({key=s}, mt)
 	KEYWORD_REGISTRY[s] = new
 	return new
 end

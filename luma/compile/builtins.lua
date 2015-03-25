@@ -44,6 +44,11 @@ function builtins.set_BANG_(body)
 	return gen(lval) .. "=" .. gen(rval), true
 end
 
+function builtins.table_set_BANG_(body)
+	local t, k, v = unpack(body)
+	return ("%s[%s] = %s"):format(gen(t), gen(k), gen(v)), true
+end
+
 function builtins.define(body)
 	local lvalue = body[1]
 	local rvalue = body[2]

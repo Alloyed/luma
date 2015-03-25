@@ -3,40 +3,38 @@
 (define lg love.graphics)
 (define lk love.keyboard)
 
-(define-object (Ball pos size speed)
-  {:pos pos :size size :speed speed})
+(define Ball
+  (table :pos (vec 100 100) :size (vec 100 100) :speed 10))
 
 (define (directions speed)
-  (list
-    (cons "up"    (vec  0         (- speed)))
-    (cons "down"  (vec  0         speed))
-    (cons "left"  (vec  (- speed) 0))
-    (cons "right" (vec  speed     0))))
+  (alist
+    "up"    (vec  0         (- speed))
+    "down"  (vec  0         speed)
+    "left"  (vec  (- speed) 0)
+    "right" (vec  speed     0)))
 
 (define (velocity self dt)
   (define (test-direction direction)
     (if (lk.isDown (car direction))
       (cdr direction)
       (vec 0 0)))
-  (apply + (map test-direction (directions (:speed self)))))
+  (+ (:pos self) (apply + (map test-direction (directions (:speed self))))))
 
 (define (Ball:update dt)
-  (table-set! (:pos self) (velocity self dt)))
+  (table-set! self :pos (velocity self dt)))
 
 (define (Ball:draw)
   (let ((pos (:pos self))
-	(size (:size self)))
+        (size (:size self)))
     (lg.rectangle "fill" (car pos) (cdr pos) (car size) (cdr size))))
 
 (define *ball* nil)
 
 (define (love.load)
-  (set! *ball* (Ball (vec 100 100) (vec 50 50) 100)))
+  (set! *ball* Ball))
 
 (define (love.update dt)
-  (.update *ball*))
+  (*ball*:update dt))
 
 (define (love.draw)
-  (.draw *ball*))
-
-nil
+  (*ball*:draw))

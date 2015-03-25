@@ -13,11 +13,12 @@ function AList.from(...)
 		return AList.empty()
 	end
 	local keys = {} -- Sorry~
-	return list.from(fun.map(function(k, v)
-		assert(not keys[k], "Duplicate keys.")
+	fun.each(function(k)
+		assert(not keys[k], "Duplicate key:" .. tostring(k))
 		keys[k] = true
-		return list.cons(k, v)
-	end, ...))
+	end, ...)
+
+	return list.from(fun.map(list.cons, ...))
 end
 
 local function is_key(i, v)

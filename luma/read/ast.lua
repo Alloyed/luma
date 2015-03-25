@@ -1,4 +1,3 @@
-local inspect = require 'inspect'
 local List    = require 'luma.lib.list'
 local ast = {}
 

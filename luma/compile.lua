@@ -1,4 +1,3 @@
-local inspect          = require 'inspect'
 local fun              = require 'luma.lib.fun'
 local ast              = require 'luma.read.ast'
 local builtins_factory = require 'luma.compile.builtins'

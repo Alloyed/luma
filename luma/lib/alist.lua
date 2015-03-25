@@ -30,7 +30,6 @@ local function selectN(n)
 	end
 end
 
-local inspect = require 'inspect'
 function AList.from_flat(...)
 	if fun.length(...) == 0 then
 		return AList.empty()

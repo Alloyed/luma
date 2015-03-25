@@ -5,7 +5,6 @@
 -- instead of lisp.
 --]]
 local fun         = require 'luma.lib.fun'
-local inspect     = require 'inspect'
 local ast         = require 'luma.read.ast'
 local AList       = require 'luma.lib.alist'
 local builtins    = {}
@@ -29,7 +28,7 @@ local function defun(signature, ...)
 	local argstr = concat(args, ",")
 	local islocal = name:match("[%.%:]") and "" or "local "
 	return ("%sfunction %s(%s) %s end")
-		:format(islocal, name, argstr, gen(body))
+		:format(islocal, name, argstr, gen(body)), true
 end
 
 local _unpack = unpack

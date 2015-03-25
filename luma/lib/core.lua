@@ -25,6 +25,7 @@ function doall(...)
 	return fun.each(identity, ...)
 end
 
+--[[
 do
 	local i, t, l = 0, {}
 	local function iter(...)
@@ -44,6 +45,11 @@ do
 		end
 		return iter
 	end
+end
+--]]
+
+function vararg(...)
+	return ipairs {...}
 end
 
 function _ADD_(...)
@@ -84,10 +90,10 @@ function apply(fn, ...)
 end
 
 function partial(f, ...)
-	local va = varargs(...)
+	local va = fun.iter(vararg(...))
 	return function(...)
-		local vb = varargs(...)
-		apply(f, va, vb)
+		local vb = fun.iter(vararg(...))
+		return apply(f, va, vb)
 	end
 end
 
@@ -105,3 +111,4 @@ end
 function mapcat(...)
 	apply(concat, map(...))
 end
+

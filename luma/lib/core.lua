@@ -12,7 +12,7 @@ alist = AList.alist
 
 local fun = require 'luma.lib.fun'
 
-map, reduce, count, nth = fun.map, fun.reduce, fun.length, fun.nth
+map, reduce, count, nth, range = fun.map, fun.reduce, fun.length, fun.nth, fun.range
 concat = fun.chain
 
 ast = require 'luma.read.ast'

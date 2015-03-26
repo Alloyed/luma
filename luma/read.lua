@@ -57,6 +57,11 @@ local function symbol_pat()
 	return (pre.print - illegal_start) * (pre.print - illegal_body)^0
 end
 
+local function method_pat()
+	local illegal_body  = pre.space + S"()[]{}/\\\"\';:.,"
+	return P'.' * (pre.print - illegal_body)^0
+end
+
 local function keyword_pat()
 	return P":" * C(symbol_pat())
 end
@@ -83,6 +88,7 @@ local function reader(raw_str)
 		num      = number_pat()  / ast.make_num,
 		keyword  = keyword_pat() / ast.make_kw,
 		symbol   = symbol_pat()  / ast.make_symbol,
+		method   = method_pat()  * Err "TODO",
 		newline  = nl --/ ast.make_newline,
 	}
 

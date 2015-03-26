@@ -54,6 +54,24 @@ function ast.make_symbol(str)
 	                 __eq       = symbol_eq})
 	return t
 end
+local function symbol_eq(a, b)
+	return b._type == 'symbol' and a[1] == b[1]
+end
+
+local function symbol_q(sym)
+	return ("ast.make_symbol(%q)"):format(sym[1])
+end
+
+-- TODO: intern symbols
+function ast.make_symbol(str)
+	local t = {_type = 'symbol', _quote = symbol_q, str}
+	setmetatable(t, {__tostring = symbol_repr,
+	                 __eq       = symbol_eq})
+	return t
+end
+function ast.make_kw(s)
+	return ast.make_sexp {ast.make_symbol'mcall', ast.make_str(s)}
+end
 
 local function string_repr(self)
 	return ("%q"):format(self[1])

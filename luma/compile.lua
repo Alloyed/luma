@@ -34,7 +34,7 @@ end
 local function exprlist(expr)
 	local res = ""
 	for i=1,#expr-1 do
-		local sep = expr[i]._nl and "" or "; "
+		local sep = expr[i]._nl and "" or ";\n"
 		res = res .. gen(expr[i]) .. sep
 	end
 	local last, isStatement = gen(expr[#expr])

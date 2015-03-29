@@ -1,18 +1,10 @@
 local kw = require('luma.lib.keyword').keyword
 
-local reader = require 'luma.read'
-local gen = require 'luma.compile'
+require 'luma.lib.prelude'
 
-require 'luma.lib.core'
-
-local function run(str, print_compiled)
-	local t = reader(str)
-	t = gen(t)
-	if print_compiled then
-		print(t)
-	end
-	local f, err = loadstring(t)
-	assert(f ~= nil, t)
+local function run(s)
+	local f, err = s_loadstring(s)
+	assert(f, err)
 	return f()
 end
 

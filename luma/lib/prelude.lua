@@ -2,7 +2,10 @@ local _LUMA_VERSION = "Luma v0.1-snapshot"
 
 if not _LOADED then
 	_LOADED = true
-	require('luma.lib.core')
+	local core = require('luma.lib.core')
+	for k, v in pairs(core) do
+		_G[k] = v
+	end
 end
 
 local reader = require 'luma.read'

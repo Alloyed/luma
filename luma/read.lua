@@ -38,8 +38,10 @@ local function number_pat()
 	local number_sign = S'+-'^-1
 	local number_decimal = number_sign * digit ^ 1
 	local number_hexadecimal = P '0' * S 'xX' * R('09', 'AF', 'af') ^ 1
-	local number_float = (digit^1 * P'.' * digit^0 + P'.' * digit^1) *
-	(S'eE' * number_sign * digit^1)^-1
+	local number_float =
+		(number_sign * digit^1 * P'.' * digit^0 + P'.' * digit^1) *
+		(S'eE' * number_sign * digit^1)^-1
+
 	return number_hexadecimal +
 	       number_float +
 	       number_decimal

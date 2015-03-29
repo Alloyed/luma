@@ -17,7 +17,7 @@ describe("Code sample:", function()
     ((= (mod n 3) 0) "Buzz")
     (:else (tostring n))))
 
-(doall (map comp (map fizzbuzz (range 100))))
+(doall (map string.concat (intersperse "\n" (map fizzbuzz (range 100)))))
 		]]
 	end)
 end)

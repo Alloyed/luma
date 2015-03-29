@@ -1,23 +1,37 @@
-local List    = require 'luma.lib.list'
+-- TODO: this is totally gross.
+local List = require 'luma.lib.list'
+local fun = require 'luma.lib.fun'
 local ast = {}
 
-local function sexp_q()
-	error("TODO")
+local function sexp_q(o)
+	local t = {}
+	fun.each(function(v)
+		table.insert(t, v:_quote())
+	end, o)
+
+	return ("ast.make_sexp{%s}"):format(table.concat(t, ", "))
 end
 
 function ast.make_sexp(tbl)
 	local l = List.from(tbl)
 	l._type = 'sexp'
+	l._quote = sexp_q
 	return l
 end
 
-local function list_q(l)
-	error("lists are broken")
+local function list_q(o)
+	local t = {}
+	fun.each(function(v)
+		table.insert(t, v:_quote())
+	end, o)
+
+	return ("ast.make_list{%s}"):format(table.concat(t, ", "))
 end
 
 function ast.make_list(tbl)
 	local l = {_type = 'sexp', List.from(tbl)}
 	tbl._type = 'list'
+	tbl._quote = list_q
 	return tbl
 end
 
@@ -54,6 +68,7 @@ function ast.make_symbol(str)
 	                 __eq       = symbol_eq})
 	return t
 end
+
 local function symbol_eq(a, b)
 	return b._type == 'symbol' and a[1] == b[1]
 end
@@ -74,11 +89,11 @@ function ast.make_kw(s)
 end
 
 local function string_repr(self)
-	return ("%q"):format(self[1])
+	return ("\"%s\""):format(self[1])
 end
 
 local function str_q(s)
-	return ("ast.make_str(%q)"):format(s[1])
+	return ("ast.make_str(%s)"):format(string_repr(s[1]))
 end
 
 function ast.make_str(str)
@@ -102,7 +117,7 @@ end
 function ast.make_num(str)
 	local t = {_type = 'number', _quote = num_q, tonumber(str)}
 	setmetatable(t, {__tostring = num_repr})
-	return t
+	return tonumber(str)
 end
 
 local function newline_repr()

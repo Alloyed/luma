@@ -50,12 +50,12 @@ function Luma.i_main(argv)
 	local args = luma:parse(argv)
 	if args.input then
 		local chunk, err = s_loadfile(args.input)
-		assert(chunk ~= nil, err)
+		assert(chunk, err)
 		return chunk()
 	end
 	if args.eval then
 		local chunk, err = s_loadstring(args.eval, "eval")
-		assert(chunk ~= nil, err)
+		assert(chunk, err)
 		return chunk()
 	end
 	if args.repl then
@@ -68,8 +68,6 @@ function Luma.c_main(argv)
 	luma:argument "input"
 		:args "*"
 		:description "input files"
-	luma:flag "-p" "--pipe"
-		:description "Pipe compiled code to stdout"
 	luma:option "-s" "--string"
 		:description "Compile string to stdout"
 	local args = luma:parse(argv)

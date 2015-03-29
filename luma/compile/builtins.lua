@@ -9,6 +9,7 @@ local ast         = require 'luma.read.ast'
 local AList       = require 'luma.lib.alist'
 local builtins    = {}
 local concat, gen = nil, nil
+local macros = nil
 
 local function defval(lval, rval)
 	local prefix = string.find(tostring(lval), '%.') and "" or "local "
@@ -125,18 +126,19 @@ function builtins._SUB_(body)
 	end
 end
 
-builtins._ADD_    = op '+'
-builtins._STAR_   = op '*'
-builtins._DIV_    = op '/'
-builtins._AND_    = op ' and '
-builtins._OR_     = op ' or '
-builtins.mod      = op '%'
-builtins._EQ_     = op '=='
-builtins.not_EQ_  = op '~='
-builtins._LT_     = op '<'
-builtins._GT_     = op '>'
-builtins._LT__EQ_ = op '<='
-builtins._GT__EQ_ = op '>='
+builtins._ADD_            = op '+'
+builtins._STAR_           = op '*'
+builtins._DIV_            = op '/'
+builtins._AND_            = op ' and '
+builtins._OR_             = op ' or '
+builtins.mod              = op '%'
+builtins._EQ_             = op '=='
+builtins.not_EQ_          = op '~='
+builtins._LT_             = op '<'
+builtins._GT_             = op '>'
+builtins._LT__EQ_         = op '<='
+builtins._GT__EQ_         = op '>='
+builtins["string.concat"] = op '..'
 
 function builtins._NOT_(body)
 	assert(#body == 1, "Not takes a single expression")
@@ -167,10 +169,28 @@ function builtins.array(body)
 end
 
 function builtins.quote(body)
-	return body[1]:_quote()
+	local o = body[1]
+	if type(o) == 'table' and o._quote then
+		return o:_quote()
+	end
+	return tostring(o)
 end
 
-return function(_concat, _gen)
-	concat, gen = _concat, _gen
+-- TODO: replace with a properly hygienic define-syntax
+function builtins.define_macro(body)
+	local signature = fun.head(body)
+	local name = tostring(fun.head(signature))
+	local args = fun.totable(fun.tail(signature))
+	local argstr = concat(args, ",")
+	local bodystr = gen(ast.make_list(fun.totable(fun.tail(body))))
+	local compiled, err = (loadstring or load)(
+		("return function(%s) %s end"):format(argstr, bodystr))
+	assert(compiled, err)
+	macros[name] = compiled ()
+	return "", true
+end
+
+return function(_concat, _gen, _macros)
+	concat, gen, macros = _concat, _gen, _macros
 	return builtins
 end

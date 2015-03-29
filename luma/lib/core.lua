@@ -1,6 +1,7 @@
 local List = require 'luma.lib.list'
 
-list, cons, car, cdr, append = List.list, List.cons, List.car, List.cdr, List.append
+     list,      cons,      car,      cdr,      append =
+List.list, List.cons, List.car, List.cdr, List.append
 
 local Keyword = require 'luma.lib.keyword'
 
@@ -12,8 +13,11 @@ alist = AList.alist
 
 local fun = require 'luma.lib.fun'
 
-map, reduce, count, nth, range = fun.map, fun.reduce, fun.length, fun.nth, fun.range
-concat = fun.chain
+map,         reduce,     nth,     range,     intersperse =
+fun.map, fun.reduce, fun.nth, fun.range, fun.intersperse
+
+    concat,    count =
+fun.chain, fun.length
 
 ast = require 'luma.read.ast'
 
@@ -61,6 +65,15 @@ function _DIV_(...)
 	return sum
 end
 
+function string.concat(...)
+	local sum = ...
+	for _, v in vararg(select(2, ...)) do
+		sum = sum .. v
+	end
+	return sum
+end
+
+-- TODO: this can probably be made more efficient without the List.from()
 function apply(fn, ...)
 	local args = List.from(fun.chain(...))
 	return fn(List.unpack(args))
@@ -74,6 +87,7 @@ function partial(f, ...)
 	end
 end
 
+-- FIXME: no werko
 function comp(...)
 	fns = {...}
 	return function(...)

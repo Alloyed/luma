@@ -1,8 +1,10 @@
+local list             = require 'luma.lib.list'
 local fun              = require 'luma.lib.fun'
 local ast              = require 'luma.read.ast'
 local builtins_factory = require 'luma.compile.builtins'
 local gen              = nil
 local builtins         = nil
+local macros           = {}
 
 local function concat(tbl, sep)
 	local tmp = {}
@@ -16,19 +18,14 @@ local function fcall(sexp)
 	local name = fun.head(sexp)
 	local args = fun.totable(fun.tail(sexp))
 	local builtin = builtins[tostring(name)]
+	local macro   = macros[tostring(name)]
 	if builtin then
 		return builtin(args)
+	elseif macro then
+		return gen(macro(unpack(args)))
 	else
 		return gen(name) .. ("(%s)"):format(concat(args, ","))
 	end
-end
-
-local function isprimitive(tbl)
-	local t = tbl._type
-	return t == 'number' or
-	       t == 'string' or
-	       t == 'symbol' or
-	       t == 'newline'
 end
 
 local function exprlist(expr)
@@ -41,32 +38,42 @@ local function exprlist(expr)
 	return res .. (isStatement and "" or "return ") .. last
 end
 
+
+local function expr_type(o)
+	rawtype = type(o)
+	if rawtype ~= 'table' then
+		return rawtype
+	elseif o._type then
+		return o._type
+	elseif list.is_list(o) then
+		return 'sexp'
+	end
+	error("expr type not recognized")
+end
+
+local gen_dispatch = {
+	list   = exprlist,
+	sexp   = fcall,
+	number = tostring,
+	string = tostring,
+	symbol = tostring
+}
+
 function gen(expr)
 	if expr == nil then
 		return ""
 	end
-	local t = expr._type
-	local mt = getmetatable(expr)
-	local s, isStatement
-	if t == 'list' then
-		s, isStatement = exprlist(expr)
-	elseif t == 'sexp' then
-		s, isStatement = fcall(expr)
-	elseif isprimitive(expr) then
-		s, isStatement = tostring(expr)
-	elseif t == nil and type(expr) == 'string' then
-		s = expr
+	local t = expr_type(expr)
+	local typed_gen = gen_dispatch[t]
+
+	if typed_gen then
+		return typed_gen(expr)
 	else
 		assert(nil,
-		("unimplemented expr type %q, %q")
+		("unimplemented expr type %q, object: %q")
 		:format(tostring(t), tostring(expr)))
-	end
-	if expr._nl then
-		return s .. "\n", isStatement
-	else
-		return s, isStatement
 	end
 end
 
-builtins = builtins_factory(concat, gen)
+builtins = builtins_factory(concat, gen, macros)
 return gen

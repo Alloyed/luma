@@ -1,9 +1,7 @@
 local _LUMA_VERSION = "Luma v0.1-snapshot"
-local path    = ""
 
 if not _LOADED then
 	_LOADED = true
-	package.path = path .. package.path
 	require('luma.lib.core')
 end
 
@@ -41,7 +39,7 @@ function s_compilefile(fname)
 	assert(res, err)
 
 	local w = io.open(string.gsub(fname, "%.luma$", ".lua"), 'w')
-	w:write("require('luma.lib.prelude');" .. res)
+	w:write(res)
 	w:close()
 
 	return true

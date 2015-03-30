@@ -6,9 +6,15 @@ local ast = {}
 local function sexp_q(o)
 	local t = {}
 	fun.each(function(v)
-		table.insert(t, v:_quote())
+		-- FIXME
+		if type(v) == 'number' then
+			table.insert(t, tostring(v))
+		else
+			table.insert(t, v:_quote())
+		end
 	end, o)
 
+	-- FIXME: return lists, not make_sexps
 	return ("ast.make_sexp{%s}"):format(table.concat(t, ", "))
 end
 
@@ -84,6 +90,13 @@ function ast.make_symbol(str)
 	                 __eq       = symbol_eq})
 	return t
 end
+
+function ast.make_quote(...)
+	local l = {ast.make_symbol'quote', ...}
+
+	return ast.make_sexp(l)
+end
+
 function ast.make_kw(s)
 	return ast.make_sexp {ast.make_symbol'mcall', ast.make_str(s)}
 end

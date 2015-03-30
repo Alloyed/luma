@@ -83,8 +83,9 @@ local function reader(raw_str)
 		           (rparen + Err "Unmatched paren"),
 		atoms    = (ows * V'atom' * ows)^1 + Err "Invalid atom",
 		atom     = V'string'  + V'comment' +
-		           V'newline' + V'sexp' +
-		           V'num'     + V'symbol' + V'keyword',
+		           V'q_atom'  + V'newline' + V'sexp' +
+		           V'num'     + V'symbol'  + V'keyword',
+		q_atom   = (P"'" * V'atom') / ast.make_quote,
 		comment  = P ';' * P((1 - S"\r\n") ^ 0) * V'newline',
 		string   = string_pat()  / ast.make_str,
 		num      = number_pat()  / ast.make_num,

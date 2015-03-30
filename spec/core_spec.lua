@@ -4,8 +4,6 @@ local function run(s)
 	return s_loadstring(s) ()
 end
 
-require 'luma.lib.core'
-
 describe("(identity)", function()
 	assert.is.equal(identity(1), 1)
 	assert.is.equal(identity(2), 2)

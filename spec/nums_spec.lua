@@ -1,10 +1,4 @@
-local reader = require 'luma.read'
-local gen = require 'luma.compile'
-require 'luma.lib.prelude'
-
-local function run(str)
-	return s_loadstring(str) ()
-end
+require 'spec.run'
 
 describe("Numbers", function()
 	it("add", function()

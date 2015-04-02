@@ -1,12 +1,5 @@
-local kw = require('luma.lib.keyword').keyword
-
-require 'luma.lib.prelude'
-
-local function run(s)
-	local f, err = s_loadstring(s)
-	assert(f, err)
-	return f()
-end
+local kw = require 'luma.lib.keyword' .keyword
+require 'spec.run'
 
 describe("keywords", function()
 	it("is equal iff the keyword string is the same", function()

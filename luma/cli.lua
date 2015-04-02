@@ -4,9 +4,9 @@ local inspect  = require 'inspect'
 
 require 'luma.lib.prelude'
 
-local Luma = {}
+local cli = {}
 
-function Luma.repl(f)
+function cli.repl(f)
 	error "FIXME"
 	local buf = ''
 	print(([[
@@ -36,50 +36,50 @@ function Luma.repl(f)
 	end
 end
 
-function Luma.i_main(argv)
-	local luma = argparse()
-		:description "Run luma code, without an explicit compile step."
-	luma:mutex(
-		luma:option "-i" "--input"
+function cli.i_main(argv)
+	local parser = argparse()
+		:description "Run Luma code, without an explicit compile step."
+	parser:mutex(
+		parser:option "-i" "--input"
 			:description "Evaluate a luma file",
-		luma:option "-e" "--eval"
+		parser:option "-e" "--eval"
 			:description "Evaluate a luma string",
-		luma:flag "-r" "--repl"
+		parser:flag "-r" "--repl"
 			:description "Start a luma REPL."
 	)
-	local args = luma:parse(argv)
+	local args = parser:parse(argv)
 	if args.input then
-		local chunk, err = s_loadfile(args.input)
+		local chunk, err = luma.loadfile(args.input)
 		assert(chunk, err)
 		return chunk()
 	end
 	if args.eval then
-		local chunk, err = s_loadstring(args.eval, "eval")
+		local chunk, err = luma.loadstring(args.eval, "eval")
 		assert(chunk, err)
 		return chunk()
 	end
 	if args.repl then
-		return Luma.repl(io.stdin)
+		return cli.repl(io.stdin)
 	end
 end
 
-function Luma.c_main(argv)
-	local luma = argparse():description "Luma is a lisp that compiles to lua"
-	luma:argument "input"
+function cli.c_main(argv)
+	local parser = argparse():description "Luma is a lisp that compiles to lua"
+	parser:argument "input"
 		:args "*"
 		:description "input files"
-	luma:option "-s" "--string"
+	parser:option "-s" "--string"
 		:description "Compile string to stdout"
-	local args = luma:parse(argv)
+	local args = parser:parse(argv)
 	if args.string then
-		local out = s_compilestring(args.string)
+		local out = luma.compile(args.string)
 		print(out)
 	else
 		for _, fname in ipairs(args.input) do
 			print("compiling " .. fname)
-			s_compilefile(fname)
+			luma.compilefile(fname)
 		end
 	end
 end
 
-return Luma
+return cli

@@ -9,22 +9,39 @@ if not _LUMA_LOADED then
 end
 
 local read    = require 'luma.read'
-local compile = require 'luma.compile'
+local codegen = require 'luma.compile'
 
--- TODO: should we namespace these? maybe namespace the original lua ones?
-function s_loadstring(s, chunk)
-	local ast = read(s)
-	return s_loadexpr(ast, chunk)
+_G.luma = {}
+
+function luma.compile(s)
+	local expr, err = read(s)
+	if err then return expr, err end
+
+	local lua, err2 = codegen(expr)
+	if err2 then return lua, err2 end
+
+	return "require('luma.lib.prelude'); " .. lua
 end
 
-function s_compilestring(s)
-	local ast = read(s)
-	return "require('luma.lib.prelude'); " .. compile(ast)
-end
+function luma.load(expr, chunk)
+	local lua, err = codegen(expr)
+	if err then return lua, err end
 
-function s_loadexpr(expr, chunk)
-	local lua = compile(expr)
 	return loadstring(lua, chunk)
+end
+
+function luma.loadstring(s, chunk)
+	local expr, err = read(s)
+	if err then return expr, err end
+
+	return luma.load(expr, chunk)
+end
+
+function luma.eval(expr, chunk)
+	local f, err = luma.load(expr, chunk)
+	if err then return f, err end
+
+	return f()
 end
 
 local function eat_file(fname)
@@ -35,12 +52,12 @@ local function eat_file(fname)
 	return s
 end
 
-function s_loadfile(fname)
-	return s_loadstring(eat_file(fname), fname)
+function luma.loadfile(fname)
+	return luma.loadstring(eat_file(fname), fname)
 end
 
-function s_compilefile(fname)
-	local res, err = s_compilestring(eat_file(fname))
+function luma.compilefile(fname)
+	local res, err = luma.compile(eat_file(fname))
 	assert(res, err)
 
 	local w = io.open(string.gsub(fname, "%.luma$", ".lua"), 'w')

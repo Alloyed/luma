@@ -17,7 +17,7 @@ local List = import(core, 'luma.lib.list', {
 
 import(core, 'luma.lib.keyword', {
 	'keyword',
-	['keyword?'] = 'is_keyword'
+	keyword_QMARK_ = 'is_keyword'
 })
 
 import(core, 'luma.lib.alist', {

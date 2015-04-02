@@ -1,8 +1,4 @@
-require 'luma.lib.prelude'
-
-local function run(s)
-	return s_loadstring(s) ()
-end
+require 'spec.run'
 
 describe("Functions", function()
 	it("can be made", function()

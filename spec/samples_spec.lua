@@ -1,9 +1,4 @@
-require 'luma.lib.prelude'
-
-local function run(s)
-	local f, err = s_loadstring(s)
-	return f ()
-end
+require 'spec.run'
 
 local sample = it
 

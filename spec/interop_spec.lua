@@ -1,8 +1,6 @@
 require 'luma.lib.prelude'
 
-local function run(s)
-	return s_loadstring(s) ()
-end
+require 'spec.run'
 
 describe("Lua tables", function()
 	it("Can be accessed using dot-syntax", function()

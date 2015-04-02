@@ -3,15 +3,17 @@ local List = require 'luma.lib.list'
 local fun = require 'luma.lib.fun'
 local ast = {}
 
+local function raw_quote(o)
+	if type(o) == 'table' and o._quote then
+		return o:_quote()
+	end
+	return tostring(o)
+end
+
 local function sexp_q(o)
 	local t = {}
 	fun.each(function(v)
-		-- FIXME
-		if type(v) == 'number' then
-			table.insert(t, tostring(v))
-		else
-			table.insert(t, v:_quote())
-		end
+		table.insert(t, raw_quote())
 	end, o)
 
 	-- FIXME: return lists, not make_sexps
@@ -28,7 +30,7 @@ end
 local function list_q(o)
 	local t = {}
 	fun.each(function(v)
-		table.insert(t, v:_quote())
+		table.insert(t, raw_quote())
 	end, o)
 
 	return ("ast.make_list{%s}"):format(table.concat(t, ", "))

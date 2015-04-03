@@ -1,4 +1,5 @@
 -- Naive linked list implementation
+require 'luma.lib.compat51'
 local fun = require 'luma.lib.fun'
 local ListProto = {}
 local list = setmetatable({}, {__index = ListProto})

@@ -25,7 +25,7 @@ local function ErrorCall (str, pos, msg, state)
 		state.msg = msg .. " at " .. loc (str, pos)
 		state.pos = pos
 	end
-	assert(nil, state.msg)
+	error(state.msg, 3)
 	return false
 end
 
@@ -68,7 +68,7 @@ local function keyword_pat()
 	return P":" * C(symbol_pat())
 end
 
-local function reader(raw_str)
+local function lpeg_reader(raw_str)
 	local nl                 = P"\n"
 	local space              = pre.space - nl
 	local ows                = space ^ 0
@@ -101,4 +101,13 @@ local function reader(raw_str)
 	return ast.tag_ast(tree)
 end
 
-return reader
+local function read(s)
+	ok, err_or_ast = pcall(lpeg_reader, s)
+	if not ok then
+		return nil, err_or_ast
+	end
+
+	return err_or_ast
+end
+
+return read

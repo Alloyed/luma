@@ -11,8 +11,15 @@ local builtins    = {}
 local concat, gen = nil, nil
 local macros = nil
 
+local function is_local(pred)
+	if pred or _G._LUMA_REPL then
+		return ""
+	end
+	return "local "
+end
+
 local function defval(lval, rval)
-	local prefix = string.find(tostring(lval), '%.') and "" or "local "
+	local prefix = is_local(string.find(tostring(lval), '%.'))
 	return prefix .. gen(lval) .. "=" .. gen(rval) .. "", true
 end
 
@@ -27,7 +34,7 @@ local function defun(signature, ...)
 	local name = tostring(fun.head(signature))
 	local args = fun.totable(fun.tail(signature))
 	local argstr = concat(args, ",")
-	local islocal = name:match("[%.%:]") and "" or "local "
+	local islocal = is_local(name:match("[%.%:]"))
 	return ("%sfunction %s(%s) %s end")
 		:format(islocal, name, argstr, gen(body)), true
 end
@@ -42,7 +49,7 @@ end
 
 function builtins.set_BANG_(body)
 	local lval, rval = unpack(body)
-	return gen(lval) .. "=" .. gen(rval), true
+	return ("%s = %s"):format(gen(lval), gen(rval)), true
 end
 
 function builtins.table_set_BANG_(body)
@@ -62,6 +69,12 @@ function builtins.define(body)
 	end
 end
 
+function builtins._DO_(body)
+	local l = ast.make_list {unpack(body)}
+	return gen(l), true
+end
+
+
 function builtins.lambda(a)
 	return closure(unpack(a))
 end
@@ -70,7 +83,7 @@ function builtins.let(form)
 	local bindforms = fun.head(form)
 	local bindstrings = {}
 	for _, binding in ipairs(bindforms) do
-		assert(#binding == 2, "Binding forms must have 2 elements")
+		assert(len(binding) == 2, "Binding forms must have 2 elements")
 		local bindstr, _ = defval(unpack(binding))
 		table.insert(bindstrings, bindstr)
 	end
@@ -78,7 +91,7 @@ function builtins.let(form)
 	local body  = fun.totable(fun.tail(form))
 	body._type = "list"
 	
-	return ('(function() %s; %s end)()'):format(bound, gen(body)), true
+	return ('(function() %s; %s end)()'):format(bound, gen(body))
 end
 
 -- if is reserved so we need to add it as a string

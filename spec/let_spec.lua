@@ -18,6 +18,18 @@ describe("(let)", function()
 			run "(let ((a 2))) (assert (= a 2))"
 		end)
 	end)
+	it("binds multiple vars", function()
+		assert.has.no.errors(function()
+			run [[
+			(let ((a 2)
+			      (b 3)
+			      (c 4))
+			  (assert (= a 2))
+			  (assert (= b 3))
+			  (assert (= c 4)))
+			]]
+		end)
+	end)
 	it("binds with nested lets", function()
 		assert.has.no.errors(function()
 			run [[
@@ -38,6 +50,11 @@ describe("(let)", function()
 			(assert (= 1 (fun)))
 			]]
 		end)
+	end)
+	it("is a returnable expression", function()
+		assert.has.no.errors(function() run [[
+		(assert (= 1 ((lambda () (let ((a 1)) a)))))
+		]] end)
 	end)
 end)
 

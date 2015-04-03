@@ -34,3 +34,10 @@ end)
 
 describe("(mapcat)", function()
 end)
+
+describe("(get)", function()
+	t = { a = 1, b = 2, [1] = 3 }
+	assert.is.equal(get(t, 'a'), t.a)
+	assert.is.equal(get(t, 'b'), t.b)
+	assert.is.equal(get(t, 1), t[1])
+end)

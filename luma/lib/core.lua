@@ -25,8 +25,9 @@ import(core, 'luma.lib.alist', {
 })
 
 local fun = import(core, 'luma.lib.fun', {
-	'map', 'reduce', 'nth', 'range', 'intersperse',
-	concat = 'chain', count = 'length'
+	'each', 'map', 'reduce', 'nth', 'range', 'intersperse', 'take', 'drop',
+	'zip',
+	concat = 'chain', count = 'length', _REPEAT_ = 'duplicate'
 })
 
 core.ast = require 'luma.read.ast'
@@ -112,6 +113,33 @@ end
 
 function core.mapcat(...)
 	core.apply(core.concat, fun.map(...))
+end
+
+-- FIXME: this shadows the table namespace
+--[[
+function core.table(...)
+	local t = {}
+	for i=1, select('#', ...), 2 do
+		t[select(i, ...)] = select(i + 1, ...)
+	end
+	return t
+end
+--]]
+
+function core.array(...)
+	local a = {}
+	for i=1, select('#', ...) do
+		a[i] = select(i, ...)
+	end
+	return a
+end
+
+function get(t, k)
+	return t[k]
+end
+
+function table_set_BANG_(t, k, v)
+	t[k] = v
 end
 
 return core

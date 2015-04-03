@@ -6,17 +6,23 @@ require 'luma.lib.prelude'
 
 local cli = {}
 
+local function printcall(ok, ...)
+	if select('#', ...) == 0 then
+		print("nil")
+	else
+		print(...)
+	end
+end
+
 function cli.repl(f)
-	error "FIXME"
 	local buf = ''
 	print(([[
 	%s
 	%s
-	Enter a blank line to evaluate.
 	CTRL-D to discard expression.
-	CTRL-D a second time to exit.
+	CTRL-C CTRL-C to exit.
 	]]):format(_LUMA_VERSION, _VERSION))
-	
+	_G._LUMA_REPL = true
 
 	while true do
 		io.write(buf == '' and '> ' or '>> ')
@@ -29,8 +35,12 @@ function cli.repl(f)
 		end
 
 		if l == '' then
-			print("EVAL")
-			print(buf)
+			local f, err = luma.loadstring(buf, "=repl")
+			if err then
+				print(err)
+			else
+				printcall(pcall(f))
+			end
 			buf = ''
 		end
 	end
@@ -54,7 +64,7 @@ function cli.i_main(argv)
 		return chunk()
 	end
 	if args.eval then
-		local chunk, err = luma.loadstring(args.eval, "eval")
+		local chunk, err = luma.loadstring(args.eval, "=eval")
 		assert(chunk, err)
 		return chunk()
 	end
@@ -72,7 +82,7 @@ function cli.c_main(argv)
 		:description "Compile string to stdout"
 	local args = parser:parse(argv)
 	if args.string then
-		local out = luma.compile(args.string)
+		local out = luma.compile(args.string, "=eval")
 		print(out)
 	else
 		for _, fname in ipairs(args.input) do

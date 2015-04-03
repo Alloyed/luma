@@ -1,4 +1,4 @@
-local _LUMA_VERSION = "Luma v0.1-snapshot"
+_G._LUMA_VERSION = "Luma v0.1-snapshot"
 
 if not _LUMA_LOADED then
 	_LUMA_LOADED = true
@@ -39,7 +39,7 @@ end
 
 function luma.eval(expr, chunk)
 	local f, err = luma.load(expr, chunk)
-	if err then return f, err end
+	assert(f, err)
 
 	return f()
 end
@@ -53,7 +53,7 @@ local function eat_file(fname)
 end
 
 function luma.loadfile(fname)
-	return luma.loadstring(eat_file(fname), fname)
+	return luma.loadstring(eat_file(fname), "@" .. fname)
 end
 
 function luma.compilefile(fname)

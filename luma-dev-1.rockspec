@@ -33,6 +33,7 @@ build = {
 		["luma.lib.list"]         = "luma/lib/list.lua",
 		["luma.lib.alist"]        = "luma/lib/alist.lua",
 		["luma.lib.keyword"]      = "luma/lib/keyword.lua",
+		["luma.lib.compat51"]     = "luma/lib/compat51.lua",
 	},
 	install = {
 		bin = {"bin/luma", "bin/lumac"}

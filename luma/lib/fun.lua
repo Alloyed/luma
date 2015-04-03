@@ -5,6 +5,7 @@
 ---
 --- Distributed under the MIT/X11 License. See COPYING.md for more details.
 ---
+require 'luma.lib.compat51'
 
 local exports = {}
 local methods = {}

@@ -51,11 +51,15 @@ local function expr_type(o)
 	error("expr type not recognized")
 end
 
+local function str_escape(s)
+	return ("%q"):format(s)
+end
+
 local gen_dispatch = {
 	list   = exprlist,
 	sexp   = fcall,
 	number = tostring,
-	string = tostring,
+	string = str_escape,
 	symbol = tostring
 }
 

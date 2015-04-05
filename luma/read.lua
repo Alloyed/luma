@@ -48,9 +48,9 @@ local function number_pat()
 end
 
 local function string_pat()
-	local quote = P"\""
+	local quote = P'"'
 	local capture = C(((1 - S "\"\r\n\f\\") + (P"\\" * 1)) ^ 0)
-	return quote * capture * (quote + Err "Unterminated quote")
+	return quote * capture * ('"' + Err "Unterminated string")
 end
 
 local function symbol_pat()

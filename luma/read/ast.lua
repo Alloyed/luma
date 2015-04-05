@@ -3,9 +3,11 @@ local List = require 'luma.lib.list'
 local fun = require 'luma.lib.fun'
 local ast = {}
 
-local function raw_quote(o)
+function ast.quote(o)
 	if type(o) == 'table' and o._quote then
 		return o:_quote()
+	elseif type(o) == 'string' then
+		return ("%q"):format(o)
 	end
 	return tostring(o)
 end
@@ -13,7 +15,7 @@ end
 local function sexp_q(o)
 	local t = {}
 	fun.each(function(v)
-		table.insert(t, raw_quote())
+		table.insert(t, ast.quote(v))
 	end, o)
 
 	-- FIXME: return lists, not make_sexps
@@ -117,10 +119,21 @@ local function str_q(s)
 	return ("ast.make_str(%s)"):format(string_repr(s[1]))
 end
 
+local control_seqs = {
+	a='\a', b='\b', f='\f', n='\n', r='\r', t='\t',
+	v='\v', ['\\']='\\', ['\"']='\"', ['\'']='\''
+}
+
+-- FIXME: lua also takes decimal sequeneces
+local function str_unescape(s)
+	local r = string.gsub(s, "\\(.)", control_seqs)
+	return r
+end
+
 function ast.make_str(str)
-	local t = {_type = 'string', _quote = str_q, str}
-	setmetatable(t, {__tostring = string_repr})
-	return t
+	-- local t = {_type = 'string', _quote = str_q, str}
+	-- setmetatable(t, {__tostring = string_repr})
+	return str_unescape(str)
 end
 
 function ast.make_kw(s)

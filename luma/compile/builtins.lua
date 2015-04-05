@@ -183,10 +183,7 @@ end
 
 function builtins.quote(body)
 	local o = body[1]
-	if type(o) == 'table' and o._quote then
-		return o:_quote()
-	end
-	return tostring(o)
+	return ast.quote(o)
 end
 
 -- TODO: replace with a properly hygienic define-syntax

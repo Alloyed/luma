@@ -89,7 +89,7 @@ local function lpeg_reader(raw_str)
 		comment  = P ';' * P((1 - S"\r\n") ^ 0) * V'newline',
 		string   = string_pat()  / ast.make_str,
 		num      = number_pat()  / ast.make_num,
-		keyword  = keyword_pat() / ast.make_kw,
+		keyword  = keyword_pat() / ast.make_keyword,
 		symbol   = symbol_pat()  / ast.make_symbol,
 		method   = method_pat()  * Err "TODO",
 		newline  = nl --/ ast.make_newline,

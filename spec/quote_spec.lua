@@ -9,7 +9,7 @@ describe("(quote)", function()
 		assert.are.equal(run "(quote -10.5)",
 		                 -10.5)
 	end)
-	it("does nothing to strings #atm", function()
+	it("does nothing to strings", function()
 		assert.are.equal(run '(quote "foo")',
 		                 run '"foo"')
 		assert.are.equal(run [[(quote "yo\nyo")]],

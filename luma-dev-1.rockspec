@@ -32,7 +32,7 @@ build = {
 		["luma.lib.fun"]          = "luma/lib/fun.lua",
 		["luma.lib.list"]         = "luma/lib/list.lua",
 		["luma.lib.alist"]        = "luma/lib/alist.lua",
-		["luma.lib.keyword"]      = "luma/lib/keyword.lua",
+		["luma.lib.symbol"]       = "luma/lib/symbol.lua",
 		["luma.lib.compat51"]     = "luma/lib/compat51.lua",
 	},
 	install = {

@@ -51,16 +51,13 @@ local function expr_type(o)
 	error("expr type not recognized")
 end
 
-local function str_escape(s)
-	return ("%q"):format(s)
-end
-
 local gen_dispatch = {
-	list   = exprlist,
-	sexp   = fcall,
-	number = tostring,
-	string = str_escape,
-	symbol = tostring
+	list    = exprlist,
+	sexp    = fcall,
+	number  = tostring,
+	string  = function(s) return string.format('%q', s) end,
+	symbol  = tostring,
+	keyword = tostring
 }
 
 function gen(expr)

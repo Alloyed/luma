@@ -15,9 +15,8 @@ local List = import(core, 'luma.lib.list', {
 	'list', 'cons', 'car', 'cdr', 'append'
 })
 
-import(core, 'luma.lib.keyword', {
-	'keyword',
-	keyword_QMARK_ = 'is_keyword'
+import(core, 'luma.lib.symbol', {
+	'keyword', 'symbol'
 })
 
 import(core, 'luma.lib.alist', {

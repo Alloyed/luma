@@ -1,6 +1,7 @@
 -- TODO: this is totally gross.
 local List = require 'luma.lib.list'
 local fun = require 'luma.lib.fun'
+local symbol = require 'luma.lib.symbol'
 local ast = {}
 
 function ast.quote(o)
@@ -45,78 +46,18 @@ function ast.make_list(tbl)
 	return tbl
 end
 
-local function symbol_repr(self)
-	return self[1]
-	:gsub('^and$',     "_AND_")
-	:gsub('^or$',      "_OR_")
-	:gsub('^xor$',     "_XOR_")
-	:gsub('^not$',     "_NOT_")
-	:gsub("^repeat$",  "_REPEAT_")
-	:gsub("^until$",   "_UNTIL_")
-	:gsub("^do$",      "_DO_")
-	:gsub("^while$",   "_WHILE_")
-	:gsub("^for$",     "_FOR_")
-	:gsub("^end$",     "_END_")
-	:gsub('^-$',       "_SUB_")
-	:gsub("-",         "_")
-	:gsub("%?",        "_QMARK_")
-	:gsub("%!",        "_BANG_")
-	:gsub("+",         "_ADD_")
-	:gsub("*",         "_STAR_")
-	:gsub("/",         "_DIV_")
-	:gsub("=",         "_EQ_")
-	:gsub("<",         "_LT_")
-	:gsub(">",         "_GT_")
-end
-
-local function symbol_eq(a, b)
-	return b._type == 'symbol' and a[1] == b[1]
-end
-
-local function symbol_q(sym)
-	return ("ast.make_symbol(%q)"):format(sym[1])
-end
-
--- TODO: intern symbols
 function ast.make_symbol(str)
-	local t = {_type = 'symbol', _quote = symbol_q, str}
-	setmetatable(t, {__tostring = symbol_repr,
-	                 __eq       = symbol_eq})
-	return t
+	return symbol.symbol(str)
 end
 
-local function symbol_eq(a, b)
-	return b._type == 'symbol' and a[1] == b[1]
-end
-
-local function symbol_q(sym)
-	return ("ast.make_symbol(%q)"):format(sym[1])
-end
-
--- TODO: intern symbols
-function ast.make_symbol(str)
-	local t = {_type = 'symbol', _quote = symbol_q, str}
-	setmetatable(t, {__tostring = symbol_repr,
-	                 __eq       = symbol_eq})
-	return t
+function ast.make_keyword(str)
+	return symbol.keyword(':' .. str)
 end
 
 function ast.make_quote(...)
 	local l = {ast.make_symbol'quote', ...}
 
 	return ast.make_sexp(l)
-end
-
-function ast.make_kw(s)
-	return ast.make_sexp {ast.make_symbol'mcall', ast.make_str(s)}
-end
-
-local function string_repr(self)
-	return ("\"%s\""):format(self[1])
-end
-
-local function str_q(s)
-	return ("ast.make_str(%s)"):format(string_repr(s[1]))
 end
 
 local control_seqs = {
@@ -131,61 +72,15 @@ local function str_unescape(s)
 end
 
 function ast.make_str(str)
-	-- local t = {_type = 'string', _quote = str_q, str}
-	-- setmetatable(t, {__tostring = string_repr})
 	return str_unescape(str)
 end
 
-function ast.make_kw(s)
-	return ast.make_sexp {ast.make_symbol'keyword', ast.make_str(s)}
-end
-
-local function num_repr(self)
-	return tostring(self[1])
-end
-
-local function num_q(n)
-	return ("ast.make_num(%f)"):format(n[1])
-end
-
 function ast.make_num(str)
-	local t = {_type = 'number', _quote = num_q, tonumber(str)}
-	setmetatable(t, {__tostring = num_repr})
 	return tonumber(str)
 end
 
-local function newline_repr()
-	return "\n"
-end
-
-function ast.make_newline()
-	local t = {_type = 'newline'}
-	--setmetatable(t, {__tostring = newline_repr})
-	return t
-end
-
-local function list_walk(expr)
-	return expr
-	--[[
-	local done = {_type = expr._type}
-	for _, v in ipairs(expr) do
-		if v._type == 'newline' then
-			if #done > 0 then
-				done[#done]._nl = true
-			else
-			end
-		elseif v._type == 'list'  or v._type == 'sexp' then
-			table.insert(done, list_walk(v))
-		else
-			table.insert(done, v)
-		end
-	end
-	return done
-	--]]
-end
-
 function ast.tag_ast(expr)
-	return list_walk(expr)
+	return expr
 end
 
 return ast

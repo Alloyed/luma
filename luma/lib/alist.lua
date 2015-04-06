@@ -3,14 +3,12 @@ local fun = require 'luma.lib.fun'
 local list = require 'luma.lib.list'
 local AList = {}
 
-function AList.empty()
-	return list.empty()
-end
+AList.EMPTY = list.EMPTY
 
 -- warning, you have to pass in an iter that returns pairs instead of ipairs
 function AList.from(...)
 	if fun.length(...) == 0 then
-		return AList.empty()
+		return AList.EMPTY
 	end
 	local keys = {} -- Sorry~
 	fun.each(function(k)
@@ -33,7 +31,7 @@ end
 
 function AList.from_flat(...)
 	if fun.length(...) == 0 then
-		return AList.empty()
+		return AList.EMPTY
 	end
 	local keys, vals = fun.partition(is_key, fun.enumerate(...))
 	local k = fun.map(selectN(2), keys)

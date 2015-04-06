@@ -35,9 +35,13 @@ local symbol = {}
 local sym_mt = {}
 function sym_mt.__tostring(s) return s.key end
 
+local function sym_quote(sym)
+	return ("symbol(%q)"):format(sym.key)
+end
+
 function symbol.symbol(raw_s)
 	local s = symbol_mangle(raw_s) -- FIXME: mangle when lua needs the symbols, not before
-	return SYMBOL_REGISTRY[s] or register_symbol(setmetatable({key = s, _type = "symbol"}, sym_mt))
+	return SYMBOL_REGISTRY[s] or register_symbol(setmetatable({key = s, _type = "symbol", _quote = sym_quote}, sym_mt))
 end
 
 local kw_mt = {}

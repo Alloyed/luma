@@ -18,8 +18,8 @@ describe("(quote)", function()
 	it("does nothing to keywords/symbols", function()
 		assert.are.equal(run "(quote :foo)",
 		                 run ":foo")
-		-- assert.are.equal(run "(quote foo)",
-		--                  run "foo")
+		assert.are.equal(run "(quote foo)",
+		                 run '(symbol "foo")')
 	end)
 	it("It returns lists verbatim", function()
 		assert.are.equal(run "(quote (1 2 3))",

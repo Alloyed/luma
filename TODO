@@ -1,5 +1,0 @@
-* Fix (quote)
-* with fixed (quote) write a basic define-syntax that loads finished exprs
-* Teach the compiler more about lua exprs vs statements
-* namespacing/modules
-* store traceback data in compiled fns

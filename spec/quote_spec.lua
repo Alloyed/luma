@@ -28,5 +28,7 @@ describe("(quote)", function()
 		                 run '(list (quote sym) "quote"  3)')
 	end)
 	it("produces eval-able output", function()
+		assert.are.equal(run "(luma.eval '(+ 1 2 3))",
+		                 run "(+ 1 2 3)")
 	end)
 end)

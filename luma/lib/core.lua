@@ -24,8 +24,8 @@ import(core, 'luma.lib.alist', {
 })
 
 local fun = import(core, 'luma.lib.fun', {
-	'each', 'map', 'reduce', 'nth', 'range', 'intersperse', 'take', 'drop',
-	'zip',
+	'each', 'map', 'reduce', 'filter', 'nth', 'range', 'intersperse', 'take',
+	'drop', 'zip',
 	concat = 'chain', count = 'length', _REPEAT_ = 'duplicate'
 })
 
@@ -71,6 +71,78 @@ function core._DIV_(...)
 	local sum = ...
 	for _, v in core.vararg(select(2, ...)) do
 		sum = sum / v
+	end
+	return sum
+end
+
+function core._AND_(...)
+	local sum = ...
+	for _, v in core.vararg(select(2, ...)) do
+		sum = sum and v
+	end
+	return sum
+end
+
+function core._OR_(...)
+	local sum = ...
+	for _, v in core.vararg(select(2, ...)) do
+		sum = sum or v
+	end
+	return sum
+end
+
+function core.mod(...)
+	local sum = ...
+	for _, v in core.vararg(select(2, ...)) do
+		sum = sum % v
+	end
+	return sum
+end
+
+function core._EQ_(...)
+	local sum = ...
+	for _, v in core.vararg(select(2, ...)) do
+		sum = sum == v
+	end
+	return sum
+end
+
+function core.not_EQ_(...)
+	local sum = ...
+	for _, v in core.vararg(select(2, ...)) do
+		sum = sum ~= v
+	end
+	return sum
+end
+
+function core._LT_(...)
+	local sum = ...
+	for _, v in core.vararg(select(2, ...)) do
+		sum = sum < v
+	end
+	return sum
+end
+
+function core._GT_(...)
+	local sum = ...
+	for _, v in core.vararg(select(2, ...)) do
+		sum = sum > v
+	end
+	return sum
+end
+
+function core._LT__EQ_(...)
+	local sum = ...
+	for _, v in core.vararg(select(2, ...)) do
+		sum = sum <= v
+	end
+	return sum
+end
+
+function core._GT__EQ_(...)
+	local sum = ...
+	for _, v in core.vararg(select(2, ...)) do
+		sum = sum >= v
 	end
 	return sum
 end
@@ -131,6 +203,12 @@ function core.array(...)
 		a[i] = select(i, ...)
 	end
 	return a
+end
+
+function core.sort(iterable, cmp)
+	local tmp = fun.totable(iterable)
+	table.sort(tmp, cmp)
+	return fun.iter(tmp)
 end
 
 function get(t, k)

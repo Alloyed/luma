@@ -33,20 +33,31 @@ end
 local symbol = {}
 
 local sym_mt = {}
-function sym_mt.__tostring(s) return s.key end
+function sym_mt.__tostring(s) return symbol_mangle(s.key) end
 
 local function sym_quote(sym)
 	return ("symbol(%q)"):format(sym.key)
 end
 
-function symbol.symbol(raw_s)
-	local s = symbol_mangle(raw_s) -- FIXME: mangle when lua needs the symbols, not before
+function symbol.symbol(s)
 	return SYMBOL_REGISTRY[s] or register_symbol(setmetatable({key = s, _type = "symbol", _quote = sym_quote}, sym_mt))
+end
+
+function symbol.uninterned(s)
+	error('TODO')
+	return setmetatable({key = s, _type = "usymbol"}, sym_mt)
+end
+
+local gensym_i = 0
+function symbol.gensym(prefix)
+	local s = (prefix or "__GENSYM") .. gensym_i
+	gensym_i = gensym_i + i
+	return symbol.symbol(s)
 end
 
 local kw_mt = {}
 function kw_mt.__tostring(o)
-	return "keyword('" .. o.key .. "')"
+	return ("keyword(%q)"):format(o.key)
 end
 
 function kw_mt.__call(o, table)

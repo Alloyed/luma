@@ -38,7 +38,7 @@ function luma.loadstring(s, chunk)
 end
 
 function luma.eval(expr, chunk)
-	local f, err = luma.load(expr, chunk)
+	local f, err = luma.load(ast.make_list{expr}, chunk)
 	assert(f, err)
 
 	return f()

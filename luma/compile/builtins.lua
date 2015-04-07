@@ -167,7 +167,7 @@ builtins._GT__EQ_         = op '>='
 builtins["string.concat"] = op '..'
 
 function builtins._NOT_(body)
-	assert(#body == 1, "Not takes a single expression")
+	assert(len(body) == 1, "Not takes a single expression")
 	return ("(not %s)"):format(gen(body[1]))
 end
 

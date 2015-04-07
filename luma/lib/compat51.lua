@@ -21,15 +21,17 @@ if not _LUMA_51_COMPAT_PATCH then
 				return ipairs_orig(t)
 			end
 		end
-	end
 
-	function len(a)
-		local mt = getmetatable(a)
-		if mt and mt.__len then
-			return mt.__len(a)
-		else
-			return #a
+		function len(a)
+			local mt = getmetatable(a)
+			if mt and mt.__len then
+				return mt.__len(a)
+			else
+				return #a
+			end
 		end
+	else
+		function len(a) return #a end
 	end
 end
 

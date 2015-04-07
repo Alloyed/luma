@@ -6,15 +6,15 @@
 
 ;; option A. clojurelike
 (define (printf fmt & args)
-  (print (apply string.format fmt args) nil)) ; nil simulates trailing comma
+  (io.write (apply string.format fmt args)))
 
 ;; option B. repeat verbatim
 (define (printf fmt ...)
-  (print (fmt:format ...) nil))
+  (io.write (fmt:format ...)))
 
 ;; option C. racketlike
 (define (printf fmt . args)
-  (print (apply string.format fmt args) nil))
+  (io.write (apply string.format fmt args)))
 
 ;;; output varargs/let destructuring
 

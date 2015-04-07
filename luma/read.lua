@@ -54,9 +54,12 @@ local function string_pat()
 end
 
 local function symbol_pat()
+	local special_symbols = P"..."
 	local illegal_start = pre.digit + pre.space + S"()[]{}\\\"\';:.,"
 	local illegal_body  = pre.space + S"()[]{}/\\\"\';,"
-	return (pre.print - illegal_start) * (pre.print - illegal_body)^0
+	local symbol = (pre.print - illegal_start) * (pre.print - illegal_body)^0
+
+	return special_symbols + symbol
 end
 
 local function method_pat()

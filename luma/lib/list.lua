@@ -8,11 +8,11 @@ local mt = {}
 list.EMPTY = setmetatable({}, mt) -- Should this be different?
 
 function ListProto.car(self)
-	return rawget(self, 1)
+	return rawget(self, '_car')
 end
 
 function ListProto.cdr(self)
-	return rawget(self, 2)
+	return rawget(self, '_cdr')
 end
 
 function ListProto.pair(self)
@@ -112,11 +112,11 @@ function mt.__tostring(l)
 end
 
 function list.cons(a, b)
-	return setmetatable({a, b}, mt)
+	return setmetatable({_car = a, _cdr = b}, mt)
 end
 
 function list.icons(a, b)
-	return {a, b}
+	return {_car = a, _cdr = b}
 end
 
 local function reverse(...)

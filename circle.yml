@@ -1,6 +1,8 @@
 dependencies:
     pre:
         - sudo apt-get update; sudo apt-get install lua5.1 luarocks
+        - sudo luarocks install luasocket
+        - sudo luarocks install luasec OPENSSL_LIBDIR=/usr/lib/x86_64-linux-gnu
         - sudo luarocks install busted
     post:
         - sudo luarocks make

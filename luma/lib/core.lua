@@ -45,104 +45,104 @@ end
 
 function core._ADD_(...)
 	local sum = ...
-	for _, v in core.vararg(select(2, ...)) do
-		sum = sum + v
+	for i=2, select('#', ...) do
+		sum = sum + select(i, ...)
 	end
 	return sum
 end
 
 function core._SUB_(...)
 	local sum = ...
-	for _, v in core.vararg(select(2, ...)) do
-		sum = sum - v
+	for i=2, select('#', ...) do
+		sum = sum - select(i, ...)
 	end
 	return sum
 end
 
 function core._STAR_(...)
 	local sum = 1
-	for _, v in core.vararg(...) do
-		sum = sum * v
+	for i=1, select('#', ...) do
+		sum = sum * select(i, ...)
 	end
 	return sum
 end
 
 function core._DIV_(...)
 	local sum = ...
-	for _, v in core.vararg(select(2, ...)) do
-		sum = sum / v
+	for i=2, select('#', ...) do
+		sum = sum / select(i, ...)
 	end
 	return sum
 end
 
 function core._AND_(...)
 	local sum = ...
-	for _, v in core.vararg(select(2, ...)) do
-		sum = sum and v
+	for i=2, select('#', ...) do
+		sum = sum and select(i, ...)
 	end
 	return sum
 end
 
 function core._OR_(...)
 	local sum = ...
-	for _, v in core.vararg(select(2, ...)) do
-		sum = sum or v
+	for i=2, select('#', ...) do
+		sum = sum or select(i, ...)
 	end
 	return sum
 end
 
 function core.mod(...)
 	local sum = ...
-	for _, v in core.vararg(select(2, ...)) do
-		sum = sum % v
+	for i=2, select('#', ...) do
+		sum = sum % select(i, ...)
 	end
 	return sum
 end
 
 function core._EQ_(...)
 	local sum = ...
-	for _, v in core.vararg(select(2, ...)) do
-		sum = sum == v
+	for i=2, select('#', ...) do
+		sum = sum == select(i, ...)
 	end
 	return sum
 end
 
 function core.not_EQ_(...)
 	local sum = ...
-	for _, v in core.vararg(select(2, ...)) do
-		sum = sum ~= v
+	for i=2, select('#', ...) do
+		sum = sum ~= select(i, ...)
 	end
 	return sum
 end
 
 function core._LT_(...)
 	local sum = ...
-	for _, v in core.vararg(select(2, ...)) do
-		sum = sum < v
+	for i=2, select('#', ...) do
+		sum = sum < select(i, ...)
 	end
 	return sum
 end
 
 function core._GT_(...)
 	local sum = ...
-	for _, v in core.vararg(select(2, ...)) do
-		sum = sum > v
+	for i=2, select('#', ...) do
+		sum = sum > select(i, ...)
 	end
 	return sum
 end
 
 function core._LT__EQ_(...)
 	local sum = ...
-	for _, v in core.vararg(select(2, ...)) do
-		sum = sum <= v
+	for i=2, select('#', ...) do
+		sum = sum <= select(i, ...)
 	end
 	return sum
 end
 
 function core._GT__EQ_(...)
 	local sum = ...
-	for _, v in core.vararg(select(2, ...)) do
-		sum = sum >= v
+	for i=2, select('#', ...) do
+		sum = sum >= select(i, ...)
 	end
 	return sum
 end
@@ -150,8 +150,8 @@ end
 -- TODO: should we monkey patch like this?
 function string.concat(...)
 	local sum = ...
-	for _, v in core.vararg(select(2, ...)) do
-		sum = sum .. v
+	for i=2, select('#', ...) do
+		sum = sum .. select(i, ...)
 	end
 	return sum
 end

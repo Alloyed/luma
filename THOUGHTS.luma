@@ -1,0 +1,52 @@
+;; Design notes
+
+;; #varargs {{{
+
+;;; input varargs
+
+;; option A. clojurelike
+(define (printf fmt & args)
+  (print (apply string.format fmt args) nil)) ; nil simulates trailing comma
+
+;; option B. repeat verbatim
+(define (printf fmt ...)
+  (print (fmt:format ...) nil))
+
+;; option C. racketlike
+(define (printf fmt . args)
+  (print (apply string.format fmt args) nil))
+
+;;; output varargs/let destructuring
+
+;; option A. don't do anything special
+(apply (lambda (a b c) ---) '(:a :b :c))
+(define (multiret) (unpack (list :a :b :c)))
+
+;; option B. lamba-list destructuring, turn varargs into lists
+(let ((a b c) '(:a :b :c)) ---)
+(define (multiret) (list :a :b :c))
+
+;; option C. reader syntax for varargs objects
+(let ((#,(a b c) (unpack '(:a :b :c)))) ---)
+(define (multiret) #,(:a :b :c))
+
+;; #varargs }}}
+
+;; #reader syntaxes {{{
+
+;; SET IN STONE
+(define list '(1 2 3))
+
+(define immutable-vector [1 2 3])
+
+(define immutable-map {:a 1 :b 2 :c 3})
+
+(define form-comment #_)
+
+;; NOT SET IN STONE
+
+(could-be #{} immutable-set lua-table)
+
+(could-be #[] lua-array)
+
+;; #reader syntaxes }}}

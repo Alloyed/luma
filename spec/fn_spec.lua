@@ -26,4 +26,14 @@ describe("Functions", function()
 		    (+ (fib (- n 1)) (fib (- n 2)))))
 		(fib 10)]], 55)
 	end)
+	it("Has a vararg syntax", function()
+		assert.are.equal(run [[
+		(define (varadd & args)
+		  (apply + args))
+		(varadd 1 2 3)]],
+		run [[ (+ 1 2 3) ]])
+		assert.are.equal(run [[
+		((lambda (f & args) (apply f args)) + 1 2 3)]],
+		run [[ (+ 1 2 3) ]])
+	end)
 end)

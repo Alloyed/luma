@@ -28,6 +28,11 @@ local function symbol_mangle(self)
 	:gsub("=",         "_EQ_")
 	:gsub("<",         "_LT_")
 	:gsub(">",         "_GT_")
+	:gsub("%&",        "_AMP_")
+	:gsub("%|",        "_BAR_")
+	:gsub("%^",        "_CARET_")
+	:gsub("%@",        "_AT_")
+	:gsub("%%",        "_PERCENT_")
 end
 
 local symbol = {}

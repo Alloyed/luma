@@ -7,6 +7,7 @@
 local fun         = require 'luma.lib.fun'
 local ast         = require 'luma.read.ast'
 local AList       = require 'luma.lib.alist'
+local symbol      = require 'luma.lib.symbol'
 local builtins    = {}
 local concat, gen = nil, nil
 local macros = nil
@@ -23,20 +24,32 @@ local function defval(lval, rval)
 	return prefix .. gen(lval) .. "=" .. gen(rval) .. "", true
 end
 
+local function closure_parts(args, body)
+	local maybe_vararg = {args[#args-1], args[#args]}
+	local wrap_vararg = ""
+	if maybe_vararg[1] == symbol.symbol('&') then
+		local sep = #args > 2 and ", " or ""
+		argstr = concat(take(#args-2, args), ",") .. sep ..  "..."
+		wrap_vararg = ("local %s = {...} "):format(maybe_vararg[2])
+	else
+		argstr = concat(args, ",")
+	end
+
+	return argstr, wrap_vararg .. gen(ast.make_list(body))
+end
+
 local function closure(args, ...)
-	local body = ast.make_list {...}
-	local argstr = concat(args:table(), ",")
-	return ("(function(%s) %s end)"):format(argstr, gen(body))
+	return ("(function(%s) %s end)")
+		:format(closure_parts(fun.totable(args), {...}))
 end
 
 local function defun(signature, ...)
-	local body = ast.make_list {...}
 	local name = tostring(fun.head(signature))
 	local args = fun.totable(fun.tail(signature))
-	local argstr = concat(args, ",")
+
 	local islocal = is_local(name:match("[%.%:]"))
 	return ("%sfunction %s(%s) %s end")
-		:format(islocal, name, argstr, gen(body)), true
+		:format(islocal, name, closure_parts(args, {...})), true
 end
 
 local _unpack = unpack

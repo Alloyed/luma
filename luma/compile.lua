@@ -8,9 +8,9 @@ local macros           = {}
 
 local function concat(tbl, sep)
 	local tmp = {}
-	for i, v in ipairs(tbl) do
-		tmp[i] = gen(v)
-	end
+	fun.each(function(v)
+		table.insert(tmp, gen(v))
+	end, tbl)
 	return table.concat(tmp, sep)
 end
 

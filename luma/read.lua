@@ -104,9 +104,8 @@ local function lpeg_reader(raw_str)
 	}
 
 	local err = {}
-	local tree = L.match(grammar, raw_str, 1, err)
-	-- assert(ast, "string parsed incorrectly: ".. raw_str)
-	return ast.tag_ast(tree)
+	local tree = assert(L.match(grammar, raw_str, 1, err))
+	return tree
 end
 
 local function read(s)

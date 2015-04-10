@@ -137,7 +137,7 @@ function list.from(...)
 	if fun.length(...) == 0 then
 		return list.EMPTY
 	end
-	-- FIXME: Real tables can safely be read in reverse
+	-- FIXME: Use from_table on table args, do a no-op on existing list args
 	return reverse(reverse(...))
 end
 

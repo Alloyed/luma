@@ -23,8 +23,8 @@ local function sexp_q(o)
 	return ("ast.make_sexp{%s}"):format(table.concat(t, ", "))
 end
 
-function ast.make_sexp(tbl)
-	local l = List.from(tbl)
+function ast.make_sexp(...)
+	local l = List.from(...)
 	l._type = 'sexp'
 	l._quote = sexp_q
 	return l
@@ -39,11 +39,11 @@ local function list_q(o)
 	return ("ast.make_list{%s}"):format(table.concat(t, ", "))
 end
 
-function ast.make_list(tbl)
-	local l = {_type = 'sexp', List.from(tbl)}
-	tbl._type = 'list'
-	tbl._quote = list_q
-	return tbl
+function ast.make_list(...)
+	local l = List.from(...)
+	l._type = 'list'
+	l._quote = list_q
+	return l
 end
 
 function ast.make_symbol(str)
@@ -55,9 +55,7 @@ function ast.make_keyword(str)
 end
 
 function ast.make_quote(...)
-	local l = {ast.make_symbol'quote', ...}
-
-	return ast.make_sexp(l)
+	return ast.make_sexp{ast.make_symbol'quote', ...}
 end
 
 local control_seqs = {
@@ -77,10 +75,6 @@ end
 
 function ast.make_num(str)
 	return tonumber(str)
-end
-
-function ast.tag_ast(expr)
-	return expr
 end
 
 return ast

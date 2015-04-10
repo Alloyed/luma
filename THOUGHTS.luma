@@ -68,9 +68,17 @@ return my_module
 (require namespaced.other_module) -- imported as namespaced.other_module
 (require '[namespaced.other_module :refer [other-field]])
 
-
-
-
-
 ;; #modules }}}
 
+;; #closure popping {{{
+
+;; The code generator makes closures to turn statements into exprs.
+;; for example
+(define a (if pred val1 val2))
+;; compiles to
+local a = ((function() if pred then return val1 else return val2 end)());
+;; which works, but introduces an unecessary closure object. It would be faster
+;; to special-case this into
+local a; if pred then a = val2 else a = val2 end;
+
+;; #closure popping }}}

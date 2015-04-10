@@ -74,7 +74,7 @@ function builtins.define(body)
 end
 
 function builtins._DO_(body)
-	local l = ast.make_list {unpack(body)}
+	local l = ast.make_list(body)
 	return gen(l), true
 end
 
@@ -92,8 +92,7 @@ function builtins.let(form)
 		table.insert(bindstrings, bindstr)
 	end
 	local bound = table.concat(bindstrings, "; ")
-	local body  = fun.totable(fun.tail(form))
-	body._type = "list"
+	local body  = ast.make_list(fun.tail(form))
 	
 	return ('(function() %s; %s end)()'):format(bound, gen(body))
 end
@@ -114,7 +113,7 @@ function builtins.cond(body)
 	for _, form in ipairs(body) do
 		local pred = fun.head(form)
 		local predstr = gen(pred)
-		local rest = gen(ast.make_list(fun.totable(fun.tail(form))))
+		local rest = gen(ast.make_list(fun.tail(form)))
 		if pred == ast.make_symbol 'else' then
 			s = s .. " else " .. rest
 		elseif first then
@@ -196,7 +195,7 @@ function builtins.define_macro(body)
 	local name = tostring(fun.head(signature))
 	local args = fun.totable(fun.tail(signature))
 	local argstr = concat(args, ",")
-	local bodystr = gen(ast.make_list(fun.totable(fun.tail(body))))
+	local bodystr = gen(ast.make_list(fun.tail(body)))
 	local compiled, err = (loadstring or load)(
 		("return function(%s) %s end"):format(argstr, bodystr))
 	assert(compiled, err)
@@ -204,6 +203,8 @@ function builtins.define_macro(body)
 	return "", true
 end
 
+-- This is a builtins factory, so the compiler and the builtins table can
+-- mutually recur. Don't try to use the builtins outside of the compiler.
 return function(_concat, _gen, _macros)
 	concat, gen, macros = _concat, _gen, _macros
 	return builtins

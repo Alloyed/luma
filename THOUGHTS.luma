@@ -50,3 +50,27 @@
 (could-be #[] lua-array)
 
 ;; #reader syntaxes }}}
+
+;; #modules {{{
+
+;; All modules have to compile down to modern lua convention, ie.
+
+local my_module = {}
+
+local other_module = require 'namespaced.other_module'
+
+my_module.field = "foo"
+
+return my_module
+
+;; things we want to support on top of that though (clojure syntax)
+(require 'namespaced.other_module :reload)
+(require namespaced.other_module) -- imported as namespaced.other_module
+(require '[namespaced.other_module :refer [other-field]])
+
+
+
+
+
+;; #modules }}}
+

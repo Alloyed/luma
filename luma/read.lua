@@ -47,6 +47,12 @@ local function number_pat()
 	       number_decimal
 end
 
+local function lstring_pat()
+	local quote = P'"""'
+	local capture = C((1 - quote) ^ 0)
+	return quote * capture * (quote + Err "Unterminated long string")
+end
+
 local function string_pat()
 	local quote = P'"'
 	local capture = C(((1 - S "\"\r\n\f\\") + (P"\\" * 1)) ^ 0)
@@ -71,9 +77,10 @@ local function keyword_pat()
 	return P":" * C(symbol_pat())
 end
 
+local inspect = require 'inspect'
+
 local function lpeg_reader(raw_str)
-	local nl                 = P"\n"
-	local space              = pre.space - nl
+	local space              = pre.space
 	local ows                = space ^ 0
 	local ws                 = space ^ 1
 	local lparen, rparen     = P"(" + P"[", P")" + P"]"
@@ -84,23 +91,23 @@ local function lpeg_reader(raw_str)
 		sexp     = lparen *
 		           Ct(V'atoms') / ast.make_sexp *
 		           (rparen + Err "Unmatched paren"),
-		atoms    = (ows * V'atom' * ows)^1 + Err "Invalid atom",
-		atom     = V'string'  + V'comment' +
-		           V'q_atom'  + V'newline' + V'sexp' +
+		atoms    = (ows * V'atom' * ows)^1 + Cc(nil),
+		atom     = V'lstring' + V'string' + V'comment' +
+		           V'q_atom'  + V'sexp' +
 		           V'num'     + V'symbol'  + V'keyword',
 		q_atom   = (P"'" * V'atom') / ast.make_quote,
-		comment  = P ';' * P((1 - S"\r\n") ^ 0) * V'newline',
+		comment  = P';' * P((1 - S"\r\n") ^ 0) * P'\n',
+		lstring  = lstring_pat() / ast.make_str,
 		string   = string_pat()  / ast.make_str,
 		num      = number_pat()  / ast.make_num,
 		keyword  = keyword_pat() / ast.make_keyword,
 		symbol   = symbol_pat()  / ast.make_symbol,
 		method   = method_pat()  * Err "TODO",
-		newline  = nl --/ ast.make_newline,
 	}
 
 	local err = {}
 	local tree = L.match(grammar, raw_str, 1, err)
-	assert(ast, "string parsed incorrectly: ".. raw_str)
+	-- assert(ast, "string parsed incorrectly: ".. raw_str)
 	return ast.tag_ast(tree)
 end
 

@@ -34,13 +34,14 @@ function cli.repl(f)
 			buf = buf .. '\n' .. l
 		end
 
-		if l == '' then
-			local f, err = luma.loadstring(buf, "=repl")
-			if err then
+		local f, err = luma.loadstring(buf, "=repl")
+		if err then
+			if not(err:find("Unterminated") or err:find("Unmatched")) then
 				print(err)
-			else
-				printcall(pcall(f))
+				buf = ''
 			end
+		else
+			printcall(pcall(f))
 			buf = ''
 		end
 	end

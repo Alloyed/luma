@@ -38,7 +38,6 @@ local function exprlist(expr)
 	return res .. (isStatement and "" or "return ") .. last
 end
 
-
 local function expr_type(o)
 	rawtype = type(o)
 	if rawtype ~= 'table' then

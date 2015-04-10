@@ -15,7 +15,7 @@ function ListProto.cdr(self)
 	return rawget(self, '_cdr')
 end
 
-function ListProto.pair(self)
+function ListProto.decons(self)
 	return ListProto.car(self), ListProto.cdr(self)
 end
 
@@ -59,7 +59,7 @@ local function _ipairs(param, state)
 		return nil
 	end
 
-	local head, tail = list.pair(state)
+	local head, tail = list.decons(state)
 	if not is_list(tail) then
 		return list.EMPTY, head, tail
 	end
@@ -97,7 +97,7 @@ mt.__eq = function(o1, o2)
 end
 
 function mt.__tostring(l)
-	local head, tail = l:pair()
+	local head, tail = l:decons()
 
 	if list.is_list(tail) then
 		local inner, sep = "", ""

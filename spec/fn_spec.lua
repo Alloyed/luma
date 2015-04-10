@@ -28,12 +28,12 @@ describe("Functions", function()
 	end)
 	it("Has a vararg syntax", function()
 		assert.are.equal(run [[
-		(define (varadd & args)
-		  (apply + args))
+		(define (varadd ...)
+		  (apply + (list ...)))
 		(varadd 1 2 3)]],
 		run [[ (+ 1 2 3) ]])
 		assert.are.equal(run [[
-		((lambda (f & args) (apply f args)) + 1 2 3)]],
+		((lambda (f ...) (apply f (list ...))) + 1 2 3)]],
 		run [[ (+ 1 2 3) ]])
 	end)
 end)

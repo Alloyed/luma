@@ -25,17 +25,8 @@ local function defval(lval, rval)
 end
 
 local function closure_parts(args, body)
-	local maybe_vararg = {args[#args-1], args[#args]}
-	local wrap_vararg = ""
-	if maybe_vararg[1] == symbol.symbol('&') then
-		local sep = #args > 2 and ", " or ""
-		argstr = concat(take(#args-2, args), ",") .. sep ..  "..."
-		wrap_vararg = ("local %s = {...} "):format(maybe_vararg[2])
-	else
-		argstr = concat(args, ",")
-	end
-
-	return argstr, wrap_vararg .. gen(ast.make_list(body))
+	argstr = concat(args, ",")
+	return argstr, gen(ast.make_list(body))
 end
 
 local function closure(args, ...)

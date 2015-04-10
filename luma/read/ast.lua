@@ -23,7 +23,6 @@ local function sexp_q(o)
 	return ("ast.make_sexp{%s}"):format(table.concat(t, ", "))
 end
 
-local inspect = require 'inspect'
 function ast.make_sexp(tbl)
 	local l = List.from(tbl)
 	l._type = 'sexp'

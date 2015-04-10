@@ -77,8 +77,6 @@ local function keyword_pat()
 	return P":" * C(symbol_pat())
 end
 
-local inspect = require 'inspect'
-
 local function lpeg_reader(raw_str)
 	local space              = pre.space
 	local ows                = space ^ 0

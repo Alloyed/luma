@@ -6,25 +6,27 @@ local gen              = nil
 local builtins         = nil
 local macros           = {}
 
-local function concat(tbl, sep)
-	local tmp = {}
+local function concat(iter, sep)
+	local s  = ""
+	local dosep = ""
 	fun.each(function(v)
-		table.insert(tmp, gen(v))
-	end, tbl)
-	return table.concat(tmp, sep)
+		s = s .. dosep .. gen(v)
+		dosep = sep
+	end, iter)
+	return s
 end
 
 local function fcall(sexp)
-	local name = fun.head(sexp)
+	local name = gen(fun.head(sexp))
 	local args = fun.totable(fun.tail(sexp))
-	local builtin = builtins[tostring(name)]
-	local macro   = macros[tostring(name)]
+	local builtin = builtins[name]
+	local macro   = macros[name]
 	if builtin then
 		return builtin(args)
 	elseif macro then
 		return gen(macro(unpack(args)))
 	else
-		return gen(name) .. ("(%s)"):format(concat(args, ","))
+		return name .. ("(%s)"):format(concat(args, ","))
 	end
 end
 
@@ -32,7 +34,7 @@ local function exprlist(exprs)
 	local res = ""
 	local last, is_statement = "", false
 	fun.each(function(e)
-		res = res .. last .. "\n"
+		res = res .. last .. ";\n"
 		last, is_statement = gen(e)
 	end, exprs)
 	return res .. (is_statement and "" or "return ") .. last
@@ -69,7 +71,7 @@ function gen(expr)
 	if typed_gen then
 		return typed_gen(expr)
 	else
-		assert(nil,
+		error(
 		("unimplemented expr type %q, object: %q")
 		:format(tostring(t), tostring(expr)))
 	end

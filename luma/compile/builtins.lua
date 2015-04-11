@@ -91,10 +91,10 @@ function builtins.let(form)
 		local bindstr, _ = defval(unpack(binding))
 		table.insert(bindstrings, bindstr)
 	end
-	local bound = table.concat(bindstrings, "; ")
+	local bound = table.concat(bindstrings, " ")
 	local body  = ast.make_list(fun.tail(form))
 	
-	return ('(function() %s; %s end)()'):format(bound, gen(body))
+	return ('(function() %s %s end)()'):format(bound, gen(body))
 end
 
 -- if is reserved so we need to add it as a string

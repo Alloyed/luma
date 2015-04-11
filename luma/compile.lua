@@ -28,18 +28,18 @@ local function fcall(sexp)
 	end
 end
 
-local function exprlist(expr)
+local function exprlist(exprs)
 	local res = ""
-	for i=1,#expr-1 do
-		local sep = expr[i]._nl and "" or ";\n"
-		res = res .. gen(expr[i]) .. sep
-	end
-	local last, isStatement = gen(expr[#expr])
-	return res .. (isStatement and "" or "return ") .. last
+	local last, is_statement = "", false
+	fun.each(function(e)
+		res = res .. last .. "\n"
+		last, is_statement = gen(e)
+	end, exprs)
+	return res .. (is_statement and "" or "return ") .. last
 end
 
 local function expr_type(o)
-	rawtype = type(o)
+	local rawtype = type(o)
 	if rawtype ~= 'table' then
 		return rawtype
 	elseif o._type then

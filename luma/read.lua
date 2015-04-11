@@ -109,7 +109,7 @@ local function lpeg_reader(raw_str)
 end
 
 local function read(s)
-	ok, err_or_ast = pcall(lpeg_reader, s)
+	local ok, err_or_ast = pcall(lpeg_reader, s)
 	if not ok then
 		return nil, err_or_ast
 	end

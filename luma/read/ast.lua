@@ -30,6 +30,14 @@ function ast.make_sexp(...)
 	return l
 end
 
+function ast.make_vexp(...)
+	return ast.make_sexp{ast.make_symbol'array', unpack(...)}
+end
+
+function ast.make_cexp(...)
+	return ast.make_sexp{ast.make_symbol'table', unpack(...)}
+end
+
 local function list_q(o)
 	local t = {}
 	fun.each(function(v)
@@ -52,6 +60,10 @@ end
 
 function ast.make_keyword(str)
 	return symbol.keyword(':' .. str)
+end
+
+function ast.make_mcall(s)
+	error("TODO")
 end
 
 function ast.make_quote(...)

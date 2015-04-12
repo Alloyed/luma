@@ -162,7 +162,7 @@ function core.apply(fn, ...)
 	return fn(List.unpack(args))
 end
 
-function partial(f, ...)
+function core.partial(f, ...)
 	local va = fun.iter(core.vararg(...))
 	return function(...)
 		local vb = fun.iter(core.vararg(...))
@@ -211,12 +211,31 @@ function core.sort(iterable, cmp)
 	return fun.iter(tmp)
 end
 
-function get(t, k)
+function core.get(t, k)
 	return t[k]
 end
 
-function table_set_BANG_(t, k, v)
+function core.get_in(t, vec)
+	local r = t
+	fun.each(function(sym)
+		r = r[sym]
+	end, vec)
+	return r
+end
+
+function core.assoc_BANG_(t, k, v)
 	t[k] = v
+end
+
+function core.assoc_in_BANG_(t, vec, v)
+	local _t, last = t, nil
+	fun.each(function(sym)
+		if last ~= nil then
+			_t = _t[last]
+		end
+		last = sym
+	end, vec)
+	_t[last] = v
 end
 
 return core

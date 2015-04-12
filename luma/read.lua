@@ -81,18 +81,25 @@ local function lpeg_reader(raw_str)
 	local space              = pre.space
 	local ows                = space ^ 0
 	local ws                 = space ^ 1
-	local lparen, rparen     = P"(" + P"[", P")" + P"]"
-	-- local lbracket, rbracket = P"[", P"]"
+	local lparen, rparen     = P"(", P")"
+	local lbracket, rbracket = P"[", P"]"
+	local lbrace, rbrace     = P"{", P"}"
 
 	local grammar = P{ 'toplevel',
 		toplevel = Ct(V'atoms') / ast.make_list,
 		sexp     = lparen *
 		           Ct(V'atoms') / ast.make_sexp *
 		           (rparen + Err "Unmatched paren"),
+		vexp     = lbracket *
+		           Ct(V'atoms') / ast.make_vexp *
+		           (rbracket + Err "Unmatched bracket"),
+		cexp     = lbrace *
+		           Ct(V'atoms') / ast.make_cexp *
+		           (rbrace + Err "Unmatched brace"),
 		atoms    = (ows * V'atom' * ows)^1 + Cc(nil),
 		atom     = V'lstring' + V'string' + V'comment' +
-		           V'q_atom'  + V'sexp' +
-		           V'num'     + V'symbol'  + V'keyword',
+		           V'q_atom'  + V'sexp'   + V'vexp'    + V'cexp' +
+		           V'num'     + V'symbol' + V'method'  +  V'keyword',
 		q_atom   = (P"'" * V'atom') / ast.make_quote,
 		comment  = P';' * P((1 - S"\r\n") ^ 0) * P'\n',
 		lstring  = lstring_pat() / ast.make_str,
@@ -100,7 +107,7 @@ local function lpeg_reader(raw_str)
 		num      = number_pat()  / ast.make_num,
 		keyword  = keyword_pat() / ast.make_keyword,
 		symbol   = symbol_pat()  / ast.make_symbol,
-		method   = method_pat()  * Err "TODO",
+		method   = method_pat()  / ast.make_mcall,
 	}
 
 	local err = {}
@@ -111,6 +118,7 @@ end
 local function read(s)
 	local ok, err_or_ast = pcall(lpeg_reader, s)
 	if not ok then
+		print(err_or_ast)
 		return nil, err_or_ast
 	end
 

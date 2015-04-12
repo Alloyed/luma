@@ -34,7 +34,7 @@ local function exprlist(exprs)
 	local res = ""
 	local last, is_statement = "", false
 	fun.each(function(e)
-		res = res .. last .. ";\n"
+		res = res .. last .. "\n"
 		last, is_statement = gen(e)
 	end, exprs)
 	return res .. (is_statement and "" or "return ") .. last

@@ -56,7 +56,7 @@ function builtins.set_BANG_(body)
 	return ("%s = %s"):format(gen(lval), gen(rval)), true
 end
 
-function builtins.table_set_BANG_(body)
+function builtins.assoc_BANG_(body)
 	local t, k, v = unpack(body)
 	return ("%s[%s] = %s"):format(gen(t), gen(k), gen(v)), true
 end
@@ -201,6 +201,18 @@ function builtins.define_macro(body)
 	assert(compiled, err)
 	macros[name] = compiled ()
 	return "", true
+end
+
+function builtins.mcall(body)
+	local table = fun.head(body)
+	local k     = fun.head(fun.tail(body))
+	local args  = fun.chain({table}, fun.drop(2, body))
+	print(table, k, args)
+	if type(k) == 'table' and k._type == 'symbol' then
+		return ("%s.%s(%s)"):format(gen(table), gen(k), concat(args, ", "))
+	else
+		return ("%s[%s](%s)"):format(gen(table), gen(k), concat(args, ", "))
+	end
 end
 
 -- This is a builtins factory, so the compiler and the builtins table can

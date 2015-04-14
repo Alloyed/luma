@@ -102,7 +102,7 @@ local function lpeg_reader(raw_str)
 		           V'num'     + V'symbol' + V'method'  +  V'keyword',
 		q_atom   = (P"'" * V'atom') / ast.make_quote,
 		comment  = P';' * P((1 - S"\r\n") ^ 0) * P'\n',
-		lstring  = lstring_pat() / ast.make_str,
+		lstring  = lstring_pat() / ast.make_lstr,
 		string   = string_pat()  / ast.make_str,
 		num      = number_pat()  / ast.make_num,
 		keyword  = keyword_pat() / ast.make_keyword,

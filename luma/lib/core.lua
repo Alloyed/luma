@@ -156,6 +156,15 @@ function string.concat(...)
 	return sum
 end
 
+setmetatable(table, {__call = function(self, ...)
+	local t = {}
+	for i=1, select('#', ...), 2 do
+		t[select(i, ...)] = select(i + 1, ...)
+	end
+	return t
+end
+})
+
 -- TODO: this can probably be made more efficient without the List.from()
 function core.apply(fn, ...)
 	local args = List.from(fun.chain(...))
@@ -170,32 +179,23 @@ function core.partial(f, ...)
 	end
 end
 
--- FIXME: no werko
 function core.comp(...)
-	fns = {...}
+	f = {...}
 	return function(...)
-		local v = ...
-		for _, f in ipairs(fns) do
-			v = f(v)
+		local arg = {...}
+		local function loop(fns)
+			if not fun.is_null(fun.tail(fns)) then
+				return fun.head(fns)(loop(fun.tail(fns)))
+			end
+			return fun.head(fns) (unpack(arg))
 		end
-		return v
+		return loop(f)
 	end
 end
 
 function core.mapcat(...)
-	core.apply(core.concat, fun.map(...))
+	return core.apply(core.concat, fun.map(...))
 end
-
--- FIXME: this shadows the table namespace
---[[
-function core.table(...)
-	local t = {}
-	for i=1, select('#', ...), 2 do
-		t[select(i, ...)] = select(i + 1, ...)
-	end
-	return t
-end
---]]
 
 function core.array(...)
 	local a = {}
@@ -225,6 +225,7 @@ end
 
 function core.assoc_BANG_(t, k, v)
 	t[k] = v
+	return t
 end
 
 function core.assoc_in_BANG_(t, vec, v)

@@ -85,6 +85,10 @@ function ast.make_str(str)
 	return str_unescape(str)
 end
 
+function ast.make_lstr(str)
+	return str
+end
+
 function ast.make_num(str)
 	return tonumber(str)
 end

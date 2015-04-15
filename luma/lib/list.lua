@@ -119,6 +119,43 @@ function list.icons(a, b)
 	return {_car = a, _cdr = b}
 end
 
+function list.conj(l, a)
+	return list.cons(a, l)
+end
+
+function list.assoc(l, k, v)
+	local new_l, i = list.cdr(l), 1
+	local tmp = {list.car(l)}
+
+	while i ~= k do
+		table.insert(tmp, (list.car(new_l)))
+		new_l = list.cdr(new_l)
+		i = i + 1
+	end
+	new_l = list.cons(v, new_l)
+
+	for i=#tmp-1, 1, -1 do
+		new_l = list.cons(tmp[i], new_l)
+	end
+	return new_l
+end
+
+function list.assocb(l, k, v)
+	local it, i = l, 1
+
+	while i ~= k do
+		it = list.cdr(it)
+		i = i + 1
+	end
+	it._car = v
+
+	return l
+end
+
+function list.get(l, n)
+	return fun.nth(n, l)
+end
+
 local function reverse(...)
 	return fun.reduce(function(l, v)
 		return list.cons(v, l)

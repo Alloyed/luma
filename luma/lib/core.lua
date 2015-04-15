@@ -31,6 +31,11 @@ local fun = import(core, 'luma.lib.fun', {
 
 core.ast = require 'luma.read.ast'
 
+core.table = require 'luma.lib.table'
+
+core.array = core.table.array
+
+
 function core.identity(...)
 	return ...
 end
@@ -156,15 +161,6 @@ function string.concat(...)
 	return sum
 end
 
-setmetatable(table, {__call = function(self, ...)
-	local t = {}
-	for i=1, select('#', ...), 2 do
-		t[select(i, ...)] = select(i + 1, ...)
-	end
-	return t
-end
-})
-
 -- TODO: this can probably be made more efficient without the List.from()
 function core.apply(fn, ...)
 	local args = List.from(fun.chain(...))
@@ -180,7 +176,7 @@ function core.partial(f, ...)
 end
 
 function core.comp(...)
-	f = {...}
+	local f = {...}
 	return function(...)
 		local arg = {...}
 		local function loop(fns)
@@ -197,46 +193,48 @@ function core.mapcat(...)
 	return core.apply(core.concat, fun.map(...))
 end
 
-function core.array(...)
-	local a = {}
-	for i=1, select('#', ...) do
-		a[i] = select(i, ...)
-	end
-	return a
-end
-
 function core.sort(iterable, cmp)
 	local tmp = fun.totable(iterable)
 	table.sort(tmp, cmp)
 	return fun.iter(tmp)
 end
 
-function core.get(t, k)
-	return t[k]
+local function impl(method_name, default)
+	return function(...)
+		local self = ...
+		if self[method_name] then
+			return self[method_name](...)
+		end
+		return default(...)
+	end
 end
+
+core.get = impl('get', function(t, k)
+	return t[k]
+end)
 
 function core.get_in(t, vec)
 	local r = t
 	fun.each(function(sym)
-		r = r[sym]
+		r = core.get(r, sym)
 	end, vec)
 	return r
 end
 
-function core.assoc_BANG_(t, k, v)
+core.assoc_BANG_ = impl('assocb', function(t, k, v)
 	t[k] = v
 	return t
-end
+end)
 
 function core.assoc_in_BANG_(t, vec, v)
 	local _t, last = t, nil
 	fun.each(function(sym)
 		if last ~= nil then
-			_t = _t[last]
+			_t = core.get(_t, last)
 		end
 		last = sym
 	end, vec)
-	_t[last] = v
+	return core.assoc_BANG_(_t, last, v)
 end
 
 return core

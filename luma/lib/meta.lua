@@ -29,8 +29,13 @@ function MT.type(o)
 	return mt and mt._type or type_orig(o)
 end
 
-function MT.docstring(o)
+function MT.docstring(o, s)
 	local mt = MT.getmetatable(o)
+	if s then
+		mt = mt or {}
+		mt._docstring = s
+		MT.setmetatable(o, mt)
+	end
 	return mt and mt._docstring
 end
 

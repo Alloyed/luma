@@ -41,7 +41,7 @@ end
 local function list_q(o)
 	local t = {}
 	fun.each(function(v)
-		table.insert(t, raw_quote())
+		table.insert(t, ast.quote(v))
 	end, o)
 
 	return ("ast.make_list{%s}"):format(table.concat(t, ", "))

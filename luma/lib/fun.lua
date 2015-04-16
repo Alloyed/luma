@@ -224,6 +224,17 @@ local range = function(start, stop, step)
 end
 exports.range = range
 
+local natural_gen = function(param, state)
+	return state + 1, state + 1
+end
+
+local naturals = function()
+	return wrap(natural_gen, 0, 0)
+end
+
+
+exports.naturals = naturals
+
 local duplicate_table_gen = function(param_x, state_x)
     return state_x + 1, unpack(param_x)
 end
@@ -905,6 +916,7 @@ local numargs = function(...)
     end
     return n
 end
+exports.numargs = numargs
 
 local zip = function(...)
     local n = numargs(...)

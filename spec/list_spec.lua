@@ -1,6 +1,7 @@
 describe("list", function()
-	local fun = require 'luma.lib.fun'
+	local fun  = require 'luma.lib.fun'
 	local list = require 'luma.lib.list'
+
 	it("implements (from)", function()
 		assert.are.same(
 			list.from{1, 2, 3},
@@ -44,10 +45,11 @@ describe("list", function()
 end)
 
 describe("alists", function()
-	local fun = require 'luma.lib.fun'
-	local list = require 'luma.lib.list'
-	local alist = require 'luma.lib.alist'
+	local fun     = require 'luma.lib.fun'
+	local list    = require 'luma.lib.list'
+	local alist   = require 'luma.lib.alist'
 	local inspect = require 'inspect'
+
 	it("can be constructed", function()
 		local lref = list.list(
 			list.cons('a', 1),

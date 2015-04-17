@@ -4,23 +4,31 @@
 
 ;;; input varargs
 
-;; option A. clojurelike
-(define (printf fmt & args)
+;; option A. racketlike
+(define (printf fmt . args)
   (io.write (apply string.format fmt args)))
 
 ;; option B. repeat verbatim
 (define (printf fmt ...)
   (io.write (fmt:format ...)))
 
-;; option C. racketlike
-(define (printf fmt . args)
+;; problem: you can't use ... in nested closures, and the compiler has license
+;; to generate those without telling you
+
+(define (my-fun ...)
+  (if true
+     (a ...) ;stdin:3: cannot use '...' outside a vararg function near '...'
+     (b ...)))
+
+;; option C. clojurelike
+(define (printf fmt & args)
   (io.write (apply string.format fmt args)))
 
 ;;; output varargs/let destructuring
 
 ;; option A. don't do anything special
 (apply (lambda (a b c) ---) '(:a :b :c))
-(define (multiret) (unpack (list :a :b :c)))
+(define (multiret) (identity :a :b :c))
 
 ;; option B. lamba-list destructuring, turn varargs into lists
 (let ((a b c) '(:a :b :c)) ---)
@@ -70,7 +78,7 @@ return my_module
 
 ;; #modules }}}
 
-;; #closure popping {{{
+;; #optimizations {{{
 
 ;; The code generator makes closures to turn statements into exprs.
 ;; for example
@@ -81,4 +89,29 @@ local a = ((function() if pred then return val1 else return val2 end)());
 ;; to special-case this into
 local a; if pred then a = val2 else a = val2 end;
 
-;; #closure popping }}}
+;; #optimizations }}}
+
+;; #leaky abstractions {{{
+
+;; NO TRACEBACKS
+
+;; luafun's gen-param-state heirarchy is handy in normal lua, where for ... do
+;; expects it, but causes issues when you care about the arity of something.
+;; See fun.numarg() as an example
+
+;; all expressions are assumed to be statements, which is untrue in lua. for
+;; example:
+
+function ()
+    2 + 2;
+    3 == 3;
+end
+
+;; not valid, but the compiler won't complain if you
+(lambda () (+ 2 2) (= 3 3) nil)
+
+;; (string.concat) doesn't necessarily imply string concatenation, you can
+;; metatable override it to do whatever
+
+;; #leaky abstractions }}}
+

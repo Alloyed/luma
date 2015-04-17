@@ -23,7 +23,7 @@ describe("(partial)", function()
 end)
 
 describe("(apply)", function()
-	assert.is.equal(apply(_ADD_, {3, 4}),      _ADD_(3, 4))
+	assert.is.equal(apply(_ADD_, {3, 4}),    _ADD_(3, 4))
 	assert.is.equal(apply(_ADD_, 3, {4}),    _ADD_(3, 4))
 	assert.is.equal(apply(_ADD_, 3, 4, {5}), _ADD_(3, 4, 5))
 	assert.is.equal(apply(_ADD_, 3, {4, 5}), _ADD_(3, 4, 5))

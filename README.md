@@ -1,4 +1,5 @@
 # Luma
+[![Circle CI](https://circleci.com/gh/Alloyed/luma.svg?style=shield&circle-token=785fb46c8249a211b8cb741889826e76c21cffe4)](https://circleci.com/gh/Alloyed/luma)
 
 **WARNING** : Still a toy, still pretty buggy and unfinished
 

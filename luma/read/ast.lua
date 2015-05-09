@@ -1,6 +1,6 @@
 -- TODO: this is totally gross.
-local List = require 'luma.lib.list'
-local fun = require 'luma.lib.fun'
+local List = require 'ltrie.list'
+local fun = require 'ltrie.fun'
 local symbol = require 'luma.lib.symbol'
 local ast = {}
 

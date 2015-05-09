@@ -1,5 +1,5 @@
-local list             = require 'luma.lib.list'
-local fun              = require 'luma.lib.fun'
+local list             = require 'ltrie.list'
+local fun              = require 'ltrie.fun'
 local ast              = require 'luma.read.ast'
 local builtins_factory = require 'luma.compile.builtins'
 local gen              = nil

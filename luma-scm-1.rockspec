@@ -1,5 +1,5 @@
 package = "Luma"
-version = "dev-1"
+version = "scm-1"
 source = {
 	url = "..."
 }
@@ -16,7 +16,8 @@ dependencies = {
 	"lua >= 5.1",
 	"lpeg >= 0.12",
 	"argparse >= 0.3",
-	"inspect >= 3.0"
+	"inspect >= 3.0",
+	"ltrie"
 }
 
 build = {
@@ -29,9 +30,6 @@ build = {
 		["luma.compile.builtins"] = "luma/compile/builtins.lua",
 		["luma.lib.prelude"]      = "luma/lib/prelude.lua",
 		["luma.lib.core"]         = "luma/lib/core.lua",
-		["luma.lib.fun"]          = "luma/lib/fun.lua",
-		["luma.lib.list"]         = "luma/lib/list.lua",
-		["luma.lib.alist"]        = "luma/lib/alist.lua",
 		["luma.lib.symbol"]       = "luma/lib/symbol.lua",
 		["luma.lib.compat51"]     = "luma/lib/compat51.lua",
 	},

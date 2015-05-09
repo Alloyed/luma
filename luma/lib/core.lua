@@ -11,19 +11,16 @@ local function import(self, module_name, import_tbl)
 	return mod
 end
 
-local List = import(core, 'luma.lib.list', {
-	'list', 'cons', 'car', 'cdr', 'append'
+local List = import(core, 'ltrie.list', {
+	'cons', 'car', 'cdr', 'append',
+	list = 'of'
 })
 
 import(core, 'luma.lib.symbol', {
 	'keyword', 'symbol'
 })
 
-import(core, 'luma.lib.alist', {
-	'alist'
-})
-
-local fun = import(core, 'luma.lib.fun', {
+local fun = import(core, 'ltrie.fun', {
 	'each', 'map', 'reduce', 'filter', 'nth', 'range', 'intersperse', 'take',
 	'drop', 'zip',
 	concat = 'chain', count = 'length', _REPEAT_ = 'duplicate'

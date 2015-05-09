@@ -35,11 +35,13 @@ describe("(comp)", function()
 	assert.is.equal(comp(sub1, _ADD_) (2, 2, 2), 5)
 end)
 
-local fun = require 'luma.lib.fun'
+local fun = require 'ltrie.fun'
 describe("(mapcat)", function()
-	assert.are.same(fun.totable(mapcat(sort,
-		{{3, 1}, {4, 2}, {5, 1}})),
-		{1, 3, 2, 4, 1, 5})
+	local iter = mapcat(sort, {{3, 1}, {4, 2}, {5, 1}})
+	local e = {1, 3, 2, 4, 1, 5}
+	fun.each(function(i, v)
+		assert.is.equal(e[i], v)
+	end, fun.enumerate(iter))
 end)
 
 describe("(table)", function()

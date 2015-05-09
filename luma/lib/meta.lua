@@ -29,6 +29,12 @@ function MT.type(o)
 	return mt and mt._type or type_orig(o)
 end
 
+-- an interesting tidbit on the introspectable bits of clojure
+-- (doc) - prints the docstring for a var given it's name
+-- (find-doc) - prints the docstring for a var that matches a pattern
+-- (apropos) - return vars whose name matches a regex
+-- (source) - print the source of a var
+-- (pst) - print a stack trace
 function MT.docstring(o, s)
 	local mt = MT.getmetatable(o)
 	if s then

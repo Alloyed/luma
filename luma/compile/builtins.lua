@@ -4,9 +4,9 @@
 -- of that expression. In a sense, they are macros that generate lua,
 -- instead of lisp.
 --]]
-local fun         = require 'luma.lib.fun'
+require 'luma.lib.compat51'
+local fun         = require 'ltrie.fun'
 local ast         = require 'luma.read.ast'
-local AList       = require 'luma.lib.alist'
 local symbol      = require 'luma.lib.symbol'
 local builtins    = {}
 local concat, gen = nil, nil
@@ -86,11 +86,11 @@ end
 function builtins.let(form)
 	local bindforms = fun.head(form)
 	local bindstrings = {}
-	for _, binding in ipairs(bindforms) do
+	fun.each(function(binding)
 		assert(len(binding) == 2, "Binding forms must have 2 elements")
 		local bindstr, _ = defval(unpack(binding))
 		table.insert(bindstrings, bindstr)
-	end
+	end, bindforms)
 	local bound = table.concat(bindstrings, " ")
 	local body  = ast.make_list(fun.tail(form))
 	
@@ -161,17 +161,26 @@ function builtins._NOT_(body)
 	return ("(not %s)"):format(gen(body[1]))
 end
 
-function builtins.table(body)
-	local alist = AList.from_flat(body)
-	local pairs = {}
-	fun.each(function(pair)
-		if pair ~= nil then
-			local k, v = pair:car(), pair:cdr()
-			table.insert(pairs, ("[%s] = %s"):format(gen(k), gen(v)))
-		end
-	end, alist)
+local function drop_indexes(...)
+	return fun.map(function(i, v)
+		return v
+	end, ...)
+end
 
-	return ("{%s}"):format(table.concat(pairs, ","))
+function builtins.table(body)
+	local keys, vals = fun.partition(function(i, _)
+		return i % 2 == 1
+	end, fun.enumerate(body))
+	keys, vals = drop_indexes(keys), drop_indexes(vals)
+	local iter = fun.zip(keys, vals)
+
+	local pairs = {}
+	fun.each(function(k, v)
+		table.insert(pairs, ("[%s] = %s"):format(gen(k), gen(v)))
+	end, iter)
+
+	local r =  ("{%s}"):format(table.concat(pairs, ","))
+	return r
 end
 
 function builtins.array(body)
@@ -207,7 +216,6 @@ function builtins.mcall(body)
 	local table = fun.head(body)
 	local k     = fun.head(fun.tail(body))
 	local args  = fun.chain({table}, fun.drop(2, body))
-	print(table, k, args)
 	if type(k) == 'table' and k._type == 'symbol' then
 		return ("%s.%s(%s)"):format(gen(table), gen(k), concat(args, ", "))
 	else

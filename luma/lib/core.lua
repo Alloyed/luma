@@ -234,9 +234,9 @@ prepended to the args before application.
 ]])
 
 function core.partial(f, ...)
-	local va = fun.iter{...}
+	local va = {...}
 	return function(...)
-		local vb = fun.iter{...}
+		local vb = {...}
 		return core.apply(f, fun.chain(va, vb))
 	end
 end
@@ -252,10 +252,11 @@ function core.comp(...)
 	return function(...)
 		local arg = {...}
 		local function loop(fns)
-			if not fun.is_null(fun.tail(fns)) then
-				return fun.head(fns) (loop(fun.tail(fns)))
+			local head, tail = fun.head(fns), fun.tail(fns)
+			if not fun.is_null(tail) then
+				return head(loop(tail))
 			end
-			return fun.head(fns) (unpack(arg))
+			return head(unpack(arg))
 		end
 		return loop(f)
 	end
@@ -296,7 +297,7 @@ local function impl(method_name, default)
 end
 
 core.get = impl('get', function(t, k)
-	return t[k]
+	return t.get and t:get(k) or t[k]
 end)
 mt.docstring(core.get, [[
 Returns the value in t mapped to k. If no such value, returns nil

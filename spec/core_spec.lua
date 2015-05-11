@@ -35,13 +35,10 @@ describe("(comp)", function()
 	assert.is.equal(comp(sub1, _ADD_) (2, 2, 2), 5)
 end)
 
-local fun = require 'ltrie.fun'
 describe("(mapcat)", function()
-	local iter = mapcat(sort, {{3, 1}, {4, 2}, {5, 1}})
-	local e = {1, 3, 2, 4, 1, 5}
-	fun.each(function(i, v)
-		assert.is.equal(e[i], v)
-	end, fun.enumerate(iter))
+	local a = mapcat(sort, {{3, 1}, {4, 2}, {5, 1}}):totable()
+	local b = {1, 3, 2, 4, 1, 5}
+	assert.are.same(a, b)
 end)
 
 describe("(table)", function()

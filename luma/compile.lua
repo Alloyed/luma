@@ -33,8 +33,10 @@ end
 local function exprlist(exprs)
 	local res = ""
 	local last, is_statement = "", false
+	local sep = ""
 	fun.each(function(e)
-		res = res .. last .. "\n"
+		res = res .. last .. sep
+		sep = ";\n"
 		last, is_statement = gen(e)
 	end, exprs)
 	return res .. (is_statement and "" or "return ") .. last

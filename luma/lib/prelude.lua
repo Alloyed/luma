@@ -20,7 +20,7 @@ function luma.compile(s)
 	local lua, err2 = codegen(expr)
 	if err2 then return lua, err2 end
 
-	return "require('luma.lib.prelude'); " .. lua
+	return "require('luma.lib.prelude');\n" .. lua
 end
 
 function luma.load(expr, chunk)

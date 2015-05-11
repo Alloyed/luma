@@ -31,6 +31,8 @@ build = {
 		["luma.lib.prelude"]      = "luma/lib/prelude.lua",
 		["luma.lib.core"]         = "luma/lib/core.lua",
 		["luma.lib.symbol"]       = "luma/lib/symbol.lua",
+		["luma.lib.meta"]         = "luma/lib/meta.lua",
+		["luma.lib.table"]        = "luma/lib/table.lua",
 		["luma.lib.compat51"]     = "luma/lib/compat51.lua",
 	},
 	install = {

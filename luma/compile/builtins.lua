@@ -99,10 +99,12 @@ end
 
 -- if is reserved so we need to add it as a string
 builtins["if"] = function(a)
+	assert(len(a) <= 3, "if statements have at most 3 elements")
 	local pred    = gen(a[1])
 	local iftrue  = gen(ast.make_list{a[2]})
 	local iffalse = a[3] and
 		"else " .. gen(ast.make_list{a[3]}) or ""
+	-- semicolon removes ambiguity when placed after a function call
 	return ("(function() if %s then %s %s end end)()")
 		:format(pred, iftrue, iffalse)
 end

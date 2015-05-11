@@ -22,7 +22,7 @@ import(core, 'luma.lib.symbol', {
 
 local fun = import(core, 'ltrie.fun', {
 	'each', 'map', 'reduce', 'filter', 'nth', 'range', 'intersperse', 'take',
-	'drop', 'zip',
+	'drop', 'zip', 'any', 'all',
 	concat = 'chain', count = 'length', _REPEAT_ = 'duplicate'
 })
 
